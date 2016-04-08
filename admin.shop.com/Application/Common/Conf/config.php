@@ -21,4 +21,5 @@ return array(
     'SHOW_PAGE_TRACE'=>true,
     'PAGE_SIZE'=>2,
     'PAGE_THEME'=>'%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%',
+    'URL_MODEL'=>2,
 );
