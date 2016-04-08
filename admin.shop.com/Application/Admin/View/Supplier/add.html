@@ -1,0 +1,47 @@
+<extend name='Layout:common'/>
+<block name='main'>
+        <h1>
+            <span class="action-span"><a href="{:U('index')}">供货商管理</a></span>
+            <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
+            <span id="search_id" class="action-span1"> - {$meta_title} </span>
+        </h1>
+        <div style="clear:both"></div>
+        <div class="main-div">
+            <form method="post" action="__GROUP__/Brand/brandAdd"enctype="multipart/form-data" >
+                <table cellspacing="1" cellpadding="3" width="100%">
+                    <tr>
+                        <td class="label">供货商名称</td>
+                        <td>
+                            <input type="text" name="brand_name" maxlength="60" value="" />
+                            <span class="require-field">*</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">供货商描述</td>
+                        <td>
+                            <textarea  name="brand_desc" cols="60" rows="4"  ></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">排序</td>
+                        <td>
+                            <input type="text" name="sort_order" maxlength="40" size="15" value="50" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">是否显示</td>
+                        <td>
+                            <input type="radio" name="is_show" value="1" checked="checked" /> 是
+                            <input type="radio" name="is_show" value="0"  /> 否(当品牌下还没有商品的时候，首页及分类页的品牌区将不会显示该品牌。)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center"><br />
+                            <input type="submit" class="button" value=" 确定 " />
+                            <input type="reset" class="button" value=" 重置 " />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+</block>
