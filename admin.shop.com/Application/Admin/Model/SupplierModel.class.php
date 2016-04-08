@@ -23,9 +23,14 @@ class SupplierModel extends \Think\Model{
         array('name','','供货商已存在',self::EXISTS_VALIDATE,'unique',self::MODEL_INSERT)
     );
     
+    /**
+     * 要求不使用数组函数,进行数组合并,要求如果元素键名冲突,就以第一个为准
+     * @param array $cond
+     * @return type
+     */
     
-    public function getPageResult(){
-        $cond = array(
+    public function getPageResult(array $cond=array()){
+        $cond = $cond + array(
             'status'=>array('gt',-1),
         );
         //获取总行数

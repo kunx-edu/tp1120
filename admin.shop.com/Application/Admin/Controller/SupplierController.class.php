@@ -42,8 +42,14 @@ class SupplierController extends \Think\Controller {
      * 2.搜索
      */
     public function index() {
-//        $rows  = $this->_model->getPageResult();
-        $this->assign($this->_model->getPageResult());
+        //获取搜索关键字的功能
+        $cond = array();
+        //模糊查询供货商的名字
+        $keyword = I('get.keyword');
+        if($keyword){
+            $cond['name'] = array('like','%'.$keyword.'%');
+        }
+        $this->assign($this->_model->getPageResult($cond));
         $this->display();
     }
 
@@ -102,7 +108,7 @@ class SupplierController extends \Think\Controller {
             'status'=>-1,
             'name'=>array('exp',"CONCAT(name,'_del')"),//等同于name=CONCAT(name,'_del')
         );
-        
+        //删除的供货商名字后添加_del后缀标识
         if($this->_model->where(array('id'=>$id))->setField($data)===false){
             $this->error(get_error($this->_model->getError()));
         }else{
