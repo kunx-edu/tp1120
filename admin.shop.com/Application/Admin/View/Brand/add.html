@@ -20,7 +20,11 @@
                         <td class="label">品牌LOGO</td>
                         <td>
                             <input type="file" id="logo" />
-                            <input type="hidden" name="logo" />
+                            <notempty name="row.logo">
+                                <br />
+                                <img src="__UPLOAD_URL_PREFIX__/{$row.logo}-200" id="logo_preview"/>
+                            </notempty>
+                            <input type="hidden" name="logo" value="{$row.logo}"/>
                         </td>
                     </tr>
                     <tr>
@@ -71,6 +75,7 @@
                         if(data.status){
                             //成功了,将文件地址存到隐藏域中
                             $(':input[name=logo]').val(data.file_url);
+                            $('#logo_preview').attr('src','__UPLOAD_URL_PREFIX__/' + data.file_url+'-200');
                             layer.msg('上传成功',{icon:6});
                         }else{
                             layer.msg(data.msg,{icon:5});

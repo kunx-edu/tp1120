@@ -1,4 +1,7 @@
 <?php
+
+phpinfo();
+exit;
 echo '<pre>';
 var_dump($_FILES);
 echo '</pre>';

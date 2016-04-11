@@ -46,6 +46,8 @@ class BrandController extends \Think\Controller {
             $cond['name'] = array('like','%'.$keyword.'%');
         }
         $this->assign($this->_model->getPageResult($cond));
+        //记录列表页的路径,保存到会话中
+        cookie('forward',__SELF__);
         $this->display();
     }
 
@@ -84,7 +86,13 @@ class BrandController extends \Think\Controller {
             if ($this->_model->save() === false) {
                 $this->error(get_error($this->_model->getError()));
             } else {
-                $this->success('修改成功', U('index'));
+                //将记录的列表页的地址取出来用于跳转,使用完后删除
+                if(!($url = cookie('forward'))){
+                    $url = U('index');
+                }else{
+                    cookie('forward',null);
+                }
+                $this->success('修改成功',$url);
             }
         } else {
             //取出数据表中的内容回显
