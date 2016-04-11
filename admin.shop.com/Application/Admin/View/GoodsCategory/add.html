@@ -79,6 +79,13 @@
                     pIdKey:'parent_id',//告知ztree父级分类标识不是pId而是parent_id
                 }
             },
+            callback:{
+                onClick:function(event,tree_id,tree_node){
+                    //获取点击节点的名字id,将名字放在input框中,将id放在隐藏域中
+                    $('#parent_name').val(tree_node.name);
+                    $('#parent_id').val(tree_node.id);
+                },
+            },
         };
 
         var zNodes = {$categories};
