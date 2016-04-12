@@ -20,7 +20,7 @@ class GoodsCategoryModel extends \Think\Model {
      * @return array
      */
     public function getList($field = '*') {
-        return $this->field($field)->where(array('status' => 1))->select();
+        return $this->field($field)->order('lft asc')->where(array('status' => 1))->select();
     }
     
     /**

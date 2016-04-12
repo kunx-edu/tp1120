@@ -1,7 +1,17 @@
 <extend name='Layout:common'/>
 <block name='css'>
-    <css href="__CSS__/page.css"/>
+    <css href="__TREEGRID__/css/jquery.treegrid.css"/>
 </block>
+<block name="js">
+    <js href="__JS__/jquery.min.js"/>
+    <js href="__TREEGRID__/js/jquery.treegrid.js"/>
+    <script type="text/javascript">
+        $(function(){
+            $('.tree').treegrid();
+        });
+    </script>
+</block>
+
 <block name='main'>
     <h1>
         <span class="action-span"><a href="{:U('add')}">添加商品分类</a></span>
@@ -11,7 +21,7 @@
     <div style="clear:both"></div>
     <form method="post" action="" name="listForm">
         <div class="list-div" id="listDiv">
-            <table cellpadding="3" cellspacing="1">
+            <table cellpadding="3" cellspacing="1" class="tree">
                 <tr>
                     <th>商品分类名称</th>
                     <th>商品分类描述</th>
@@ -20,7 +30,7 @@
                     <th>操作</th>
                 </tr>
                 <foreach name='rows' item='row'>
-                    <tr>
+                    <tr class="treegrid-{$row.id} <neq name='row.level' value='1'>treegrid-parent-{$row.parent_id}</neq>">
                         <td class="first-cell">{$row.name}</td>
                         <td align="center">{$row.intro}</td>
                         <td align="center">{$row.sort}</td>
