@@ -61,10 +61,24 @@ class GoodsCategoryController extends \Think\Controller {
     }
 
     public function edit($id) {
-        $row = $this->_model->find($id);
-        $this->assign('row', $row);
-        $this->_before_view();
-        $this->display('add');
+        if(IS_POST){
+            //收集数据
+            if ($this->_model->create() === false) {
+                $this->error(get_error($this->_model->getError()));
+            }
+
+            //添加节点
+            //提示条状
+            if($this->_model->updateCategory()===false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            $this->success('修改成功',U('index'));
+        }else{
+            $row = $this->_model->find($id);
+            $this->assign('row', $row);
+            $this->_before_view();
+            $this->display('add');
+        }
     }
 
     public function delete($id) {

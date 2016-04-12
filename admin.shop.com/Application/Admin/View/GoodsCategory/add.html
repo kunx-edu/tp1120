@@ -94,6 +94,19 @@
             $(':input[name=status]').val([{$row.status | default = 1}]);
             var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
             ztree_obj.expandAll(true);
+            
+            //编辑页面回显父级分类
+            //1.根据父级节点的id找到ztree中对应的节点
+            var parent_node = ztree_obj.getNodesByParam("id", {$row.parent_id|default=0});
+            //2.选中此节点
+            if(parent_node.length>0){
+                parent_node = parent_node[0];
+                ztree_obj.selectNode(parent_node);
+                //找到父级分类的名字和id放到指定的表单控件中
+                $('#parent_name').val(parent_node.name);
+                $('#parent_id').val(parent_node.id);
+            }
+            
         });
 
 
