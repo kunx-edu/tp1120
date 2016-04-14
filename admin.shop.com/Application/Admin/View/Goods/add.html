@@ -1,0 +1,230 @@
+<extend name="Layout:common"/>
+<block name="css">
+    <css href="__ZTREE__/css/zTreeStyle/zTreeStyle.css"/>
+    <style type="text/css">
+        .upload-pre-item img{
+            width:150px;
+        }
+
+        .upload-pre-item{
+            display:inline-block;
+        }
+
+        .upload-pre-item a{
+            position:relative;
+            top:5px;
+            right:15px;
+            float:right;
+            color:red;
+            font-size:16px;
+            text-decoration:none;
+        }
+        ul.ztree{
+            margin-top: 10px;
+            border: 1px solid #617775;
+            background: #f0f6e4;
+            width: 220px;
+            overflow-y: scroll;
+            overflow-x: auto;
+        }
+    </style>
+
+</block>
+<block name='js'>
+    <js href='__JS__/jquery.min.js'/>
+    <js href='__ZTREE__/js/jquery.ztree.core.min.js'/>
+    <js href='__UEDITOR__/my.config.js'/>
+    <js href='__UEDITOR__/ueditor.all.min.js'/>
+    <js href='__UEDITOR__/lang/zh-cn/zh-cn.js'/>
+    <script type='text/javascript'>
+        var ue = UE.getEditor('editor');
+        //准备配置选项数据
+        var setting = {
+        data: {
+        simpleData: {
+        enable: true,
+                pIdKey:'parent_id', //告知ztree父级分类标识不是pId而是parent_id
+        }
+        },
+                callback:{
+                onClick:function(event, tree_id, tree_node){
+                //获取点击节点的名字id,将名字放在input框中,将id放在隐藏域中
+                $('#goods_category_name').val(tree_node.name);
+                $('#goods_category_id').val(tree_node.id);
+                },
+                },
+        };
+        var zNodes = {$categories};
+        $(function () {
+        $(':input[name=status]').val([{$row.status | default = 1}]);
+        var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+        ztree_obj.expandAll(true);
+//            //编辑页面回显父级分类
+//            //1.根据父级节点的id找到ztree中对应的节点
+//            var parent_node = ztree_obj.getNodesByParam("id", {$row.parent_id|default=0});
+//            //2.选中此节点
+//            if(parent_node.length>0){
+//                parent_node = parent_node[0];
+//                ztree_obj.selectNode(parent_node);
+//                //找到父级分类的名字和id放到指定的表单控件中
+//                $('#goods_category_name').val(parent_node.name);
+//                $('#goods_category_id').val(parent_node.id);
+//            }
+
+
+        ///==============性感的分割线==================
+        //1.选中是否在售
+        $(':input[name=is_on_sale]').val([{$row.is_on_sale|default=1}]);
+
+        });
+    </script>
+</block>
+<block name='main'>
+    <h1>
+        <span class="action-span"><a href="{:U('index')}">商品列表</a>
+        </span>
+        <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
+        <span id="search_id" class="action-span1"> - {$meta_title} </span>
+        <div style="clear:both"></div>
+    </h1>
+
+    <div class="tab-div">
+        <div id="tabbody-div">
+            <form enctype="multipart/form-data" action="{:U()}" method="post">
+                <table width="90%" id="general-table" align="center">
+                    <tr>
+                        <td class="label">商品名称：</td>
+                        <td><input type="text" name="name" value="" size="30" />
+                            <span class="require-field">*</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label">商品货号： </td>
+                        <td>
+                            <input type="text" name="sn" value="" size="20"/>
+                            <span id="goods_sn_notice"></span><br />
+                            <span class="notice-span" id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">商品分类：</td>
+                        <td>
+                            <input type="hidden" name='goods_category_id' id='goods_category_id'/>
+                            <input type="text" id='goods_category_name' disabled='disabled'/>
+                            <ul id="treeDemo" class="ztree"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">商品品牌：</td>
+                        <td>
+                            {:arr2select($brands,'brand_id','id','name')}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">供应商：</td>
+                        <td>
+                            {:arr2select($suppliers,'supplier_id','id','name')}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">LOGO：</td>
+                        <td>
+                            <input type="file" name="logo" value="" size="20"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">本店售价：</td>
+                        <td>
+                            <input type="text" name="shop_price" value="" size="20"/>
+                            <span class="require-field">*</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">市场售价：</td>
+                        <td>
+                            <input type="text" name="market_price" value="" size="20" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">商品数量：</td>
+                        <td>
+                            <input type="text" name="stock" size="8" value="{$row.stock|default=100}"/>
+                        </td>
+                    </tr>
+                    <td class="label">是否上架：</td>
+                    <td>
+                        <input type="radio" name="is_on_sale" value="1" /> 是
+                        <input type="radio" name="is_on_sale" value="0" /> 否
+                    </td>
+                    </tr>
+                    <tr>
+                        <td class="label">加入推荐：</td>
+                        <td>
+                            <label><input type="checkbox" name="goods_status[]" value="1" /> 精品 </label>
+                            <label><input type="checkbox" name="goods_status[]" value="2"/> 新品 </label>
+                            <label><input type="checkbox" name="goods_status[]" value="4" /> 热销</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">推荐排序：</td>
+                        <td>
+                            <input type="text" name="sort" size="5" value="{$row.sort|default=20}"/>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td></td>
+                        <td><hr /></td>
+                    </tr>
+
+                    <tr>
+                        <td class="label">商品详细描述：</td>
+                        <td>
+                            <textarea name="content" cols="40" rows="3" id='editor'></textarea>
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <td></td>
+                        <td><hr /></td>
+                    </tr>
+
+                    <tr>
+                        <td class="label">商品相册：</td>
+                        <td>
+                            <div class="upload-img-box">
+                                <div class="upload-pre-item">
+                                    <img src="images/goods1.jpg"/>
+                                    <a href="#">×</a>
+                                </div>
+
+                                <div class="upload-pre-item">
+                                    <img src="images/goods2.jpg"/>
+                                    <a href="#">×</a>
+                                </div>
+
+                                <div class="upload-pre-item">
+                                    <img src="images/goods3.jpg"/>
+                                    <a href="#">×</a>
+                                </div>
+                            </div>
+
+                            <div>
+                                <input type="file" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <div class="button-div">
+                    <input type="submit" value=" 确定 " class="button"/>
+                    <input type="reset" value=" 重置 " class="button" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+</block>

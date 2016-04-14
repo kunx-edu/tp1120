@@ -11,6 +11,7 @@ return array(
         '__LAYER__'     => DOMAIN . '/Public/ext/layer',
         '__ZTREE__'     => DOMAIN . '/Public/ext/ztree',
         '__TREEGRID__'     => DOMAIN . '/Public/ext/treegrid',
+        '__UEDITOR__'     => DOMAIN . '/Public/ext/ueditor',
         '__UPLOAD_URL_PREFIX__'   => 'http://7xsucm.com1.z0.glb.clouddn.com',
     ),
     //配置数据库连接

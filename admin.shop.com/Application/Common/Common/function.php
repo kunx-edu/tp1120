@@ -21,3 +21,14 @@ function get_error($errors) {
     $html .= '<ol>';
     return $html;
 }
+
+
+function arr2select($data,$name,$value_field='id',$name_field='name'){
+    $html = '<select name="' . $name .'">';
+    $html .= '<option value="">请选择...</option>';
+    foreach($data as $value){
+        $html .= '<option value="'.$value[$value_field].'">' .$value[$name_field]. '</option>';
+    }
+    $html .='</select>';
+    return $html;
+}
