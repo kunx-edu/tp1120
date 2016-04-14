@@ -28,7 +28,6 @@ class SupplierModel extends \Think\Model{
      * @param array $cond
      * @return type
      */
-    
     public function getPageResult(array $cond=array()){
         $cond = $cond + array(
             'status'=>array('gt',-1),

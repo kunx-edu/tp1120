@@ -15,7 +15,7 @@ namespace Admin\Controller;
 class GoodsController extends \Think\Controller{
     /**
      * 存储模型对象.
-     * @var \Admin\Model\GoodsCategoryModel 
+     * @var \Admin\Model\GoodsModel 
      */
     private $_model = null;
 
@@ -34,6 +34,19 @@ class GoodsController extends \Think\Controller{
         $this->_model = D('Goods');
     }
     
+    /**
+     * 展示商品列表.
+     */
+    public function index(){
+        //准备数据
+        $rows = $this->_model->getPageResult();
+        $this->assign($rows);
+        $this->display();
+    }
+    
+    /**
+     * 添加商品
+     */
     public function add(){
         if(IS_POST){
             if($this->_model->create()===false){
@@ -52,6 +65,29 @@ class GoodsController extends \Think\Controller{
         }
     }
     
+    public function edit($id) {
+        if(IS_POST){
+            //1.收集数据
+            if($this->_model->create()===false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            //2.执行修改
+            if($this->_model->updateGoods()===false){
+                $this->error(get_error($this->_model->getError()));
+            }else{
+                $this->success('修改商品成功',U('index'));
+            }
+            
+        }else{
+            //获取商品信息,如果没有找到,就跳转到列表页
+            if(!$row = $this->_model->getGoodsInfo($id)){
+                $this->error('请检查商品id',U('index'));
+            }
+            $this->_before_view();
+            $this->assign('row', $row);
+            $this->display('add');
+        }
+    }
     
     /**
      * 准备分类列表用于选择父级分类,ztree插件使用的是json对象,所以传递的是json字符串.

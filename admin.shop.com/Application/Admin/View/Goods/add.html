@@ -1,6 +1,7 @@
 <extend name="Layout:common"/>
 <block name="css">
     <css href="__ZTREE__/css/zTreeStyle/zTreeStyle.css"/>
+    <css href="__UPLOADIFY__/uploadify.css"/>
     <style type="text/css">
         .upload-pre-item img{
             width:150px;
@@ -19,6 +20,7 @@
             font-size:16px;
             text-decoration:none;
         }
+        
         ul.ztree{
             margin-top: 10px;
             border: 1px solid #617775;
@@ -32,6 +34,8 @@
 </block>
 <block name='js'>
     <js href='__JS__/jquery.min.js'/>
+    <js href='__UPLOADIFY__/jquery.uploadify.min.js'/>
+    <js href='__LAYER__/layer.js'/>
     <js href='__ZTREE__/js/jquery.ztree.core.min.js'/>
     <js href='__UEDITOR__/my.config.js'/>
     <js href='__UEDITOR__/ueditor.all.min.js'/>
@@ -40,42 +44,98 @@
         var ue = UE.getEditor('editor');
         //准备配置选项数据
         var setting = {
-        data: {
-        simpleData: {
-        enable: true,
-                pIdKey:'parent_id', //告知ztree父级分类标识不是pId而是parent_id
-        }
-        },
-                callback:{
+                data: {
+                simpleData: {
+                enable: true,
+                        pIdKey:'parent_id', //告知ztree父级分类标识不是pId而是parent_id
+                }
+            },
+            callback:{
                 onClick:function(event, tree_id, tree_node){
-                //获取点击节点的名字id,将名字放在input框中,将id放在隐藏域中
-                $('#goods_category_name').val(tree_node.name);
-                $('#goods_category_id').val(tree_node.id);
+                    //获取点击节点的名字id,将名字放在input框中,将id放在隐藏域中
+                    $('#goods_category_name').val(tree_node.name);
+                    $('#goods_category_id').val(tree_node.id);
                 },
+                //当触发点击回调之前先判断是否是叶子节点.
+                beforeClick:function(tree_id,tree_node){
+                    if(tree_node.isParent){
+                        layer.msg('请选择叶子节点',{icon:5,time:1000});
+                        return false;
+                    }
                 },
+            },
         };
         var zNodes = {$categories};
         $(function () {
         $(':input[name=status]').val([{$row.status | default = 1}]);
         var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
         ztree_obj.expandAll(true);
-//            //编辑页面回显父级分类
-//            //1.根据父级节点的id找到ztree中对应的节点
-//            var parent_node = ztree_obj.getNodesByParam("id", {$row.parent_id|default=0});
-//            //2.选中此节点
-//            if(parent_node.length>0){
-//                parent_node = parent_node[0];
-//                ztree_obj.selectNode(parent_node);
-//                //找到父级分类的名字和id放到指定的表单控件中
-//                $('#goods_category_name').val(parent_node.name);
-//                $('#goods_category_id').val(parent_node.id);
-//            }
+        //编辑页面回显父级分类
+        //1.根据父级节点的id找到ztree中对应的节点
+        var category_node = ztree_obj.getNodesByParam("id", {$row.goods_category_id|default=0});
+        //2.选中此节点
+        if(category_node.length>0){
+            category_node = category_node[0];
+            ztree_obj.selectNode(category_node);
+            //找到父级分类的名字和id放到指定的表单控件中
+            $('#goods_category_name').val(category_node.name);
+            $('#goods_category_id').val(category_node.id);
+        }
 
 
         ///==============性感的分割线==================
         //1.选中是否在售
         $(':input[name=is_on_sale]').val([{$row.is_on_sale|default=1}]);
-
+        //2.回显商品状态
+        $('.goods_status').val({$row.goods_status});
+        });
+        
+        
+        
+        
+        //---------------性感的水蛇腰分割线-------------------
+        $('#gallery-upload').uploadify({
+            'buttonText':'选择文件',
+            'fileObjName':'file',
+            'swf'      : '__UPLOADIFY__/uploadify.swf',
+            'uploader' : '{:U("Upload/upload")}',
+            'onUploadSuccess':function(file_node,data){
+                //将返回的字符串转为json对象
+                data = $.parseJSON(data);
+                if(data.status){
+                    //成功了,将文件地址存到隐藏域中
+                    var upload_img_box = $('.upload-img-box');
+                    var html = '';
+                    html += '<div class="upload-pre-item">';
+                    html += '<input type="hidden" name="path[]" value="'+data.file_url+'"/>';
+                    html += '<img src="__UPLOAD_URL_PREFIX__/'+data.file_url+'-150"/>';
+                    html += '<a href="javascript:void(0);">×</a>';
+                    html += '</div>';
+                    $(html).appendTo(upload_img_box);
+                    layer.msg('上传成功',{icon:6});
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            
+        });
+        
+        //事件绑定,当点击×的时候将div整个移除
+        $('.upload-img-box').on('click','.upload-pre-item a',function(){
+            var node = $(this);
+            var gallery_id = node.attr('data');
+            var flag = true;//是否要删除div
+            if(gallery_id){
+                var url = '{:U("GoodsGallery/delete")}';
+                var data = {id:gallery_id};
+                $.getJSON(url,data,function(response){
+                    if(response.status){
+                        node.parent().remove();
+                    }
+                });
+            }else{
+                node.parent().remove();
+            }
         });
     </script>
 </block>
@@ -94,13 +154,13 @@
                 <table width="90%" id="general-table" align="center">
                     <tr>
                         <td class="label">商品名称：</td>
-                        <td><input type="text" name="name" value="" size="30" />
+                        <td><input type="text" name="name" value="{$row.name}" size="30" />
                             <span class="require-field">*</span></td>
                     </tr>
                     <tr>
                         <td class="label">商品货号： </td>
                         <td>
-                            <input type="text" name="sn" value="" size="20"/>
+                            <input type="text" name="sn" value="{$row.sn}" size="20"/>
                             <span id="goods_sn_notice"></span><br />
                             <span class="notice-span" id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
                         </td>
@@ -108,7 +168,7 @@
                     <tr>
                         <td class="label">商品分类：</td>
                         <td>
-                            <input type="hidden" name='goods_category_id' id='goods_category_id'/>
+                            <input type="hidden" name='goods_category_id' value='' id='goods_category_id'/>
                             <input type="text" id='goods_category_name' disabled='disabled'/>
                             <ul id="treeDemo" class="ztree"></ul>
                         </td>
@@ -116,13 +176,13 @@
                     <tr>
                         <td class="label">商品品牌：</td>
                         <td>
-                            {:arr2select($brands,'brand_id','id','name')}
+                            {:arr2select($brands,'brand_id','id','name',$row['brand_id'])}
                         </td>
                     </tr>
                     <tr>
                         <td class="label">供应商：</td>
                         <td>
-                            {:arr2select($suppliers,'supplier_id','id','name')}
+                            {:arr2select($suppliers,'supplier_id','id','name',$row['supplier_id'])}
                         </td>
                     </tr>
                     <tr>
@@ -134,14 +194,14 @@
                     <tr>
                         <td class="label">本店售价：</td>
                         <td>
-                            <input type="text" name="shop_price" value="" size="20"/>
+                            <input type="text" name="shop_price" value="{$row.shop_price}" size="20"/>
                             <span class="require-field">*</span>
                         </td>
                     </tr>
                     <tr>
                         <td class="label">市场售价：</td>
                         <td>
-                            <input type="text" name="market_price" value="" size="20" />
+                            <input type="text" name="market_price" value="{$row.market_price}" size="20" />
                         </td>
                     </tr>
                     <tr>
@@ -159,9 +219,9 @@
                     <tr>
                         <td class="label">加入推荐：</td>
                         <td>
-                            <label><input type="checkbox" name="goods_status[]" value="1" /> 精品 </label>
-                            <label><input type="checkbox" name="goods_status[]" value="2"/> 新品 </label>
-                            <label><input type="checkbox" name="goods_status[]" value="4" /> 热销</label>
+                            <label><input type="checkbox" name="goods_status[]" value="1" class='goods_status'/> 精品 </label>
+                            <label><input type="checkbox" name="goods_status[]" value="2" class='goods_status'/> 新品 </label>
+                            <label><input type="checkbox" name="goods_status[]" value="4" class='goods_status'/> 热销</label>
                         </td>
                     </tr>
                     <tr>
@@ -180,7 +240,7 @@
                     <tr>
                         <td class="label">商品详细描述：</td>
                         <td>
-                            <textarea name="content" cols="40" rows="3" id='editor'></textarea>
+                            <textarea name="content" cols="40" rows="3" id='editor'>{$row.content}</textarea>
                         </td>
                     </tr>
 
@@ -195,36 +255,27 @@
                         <td class="label">商品相册：</td>
                         <td>
                             <div class="upload-img-box">
-                                <div class="upload-pre-item">
-                                    <img src="images/goods1.jpg"/>
-                                    <a href="#">×</a>
-                                </div>
-
-                                <div class="upload-pre-item">
-                                    <img src="images/goods2.jpg"/>
-                                    <a href="#">×</a>
-                                </div>
-
-                                <div class="upload-pre-item">
-                                    <img src="images/goods3.jpg"/>
-                                    <a href="#">×</a>
-                                </div>
+                                <foreach name='row.paths' item='path'>
+                                    <div class="upload-pre-item">
+                                        <img src="__UPLOAD_URL_PREFIX__/{$path.path}-150"/>
+                                        <a href="javascript:;" data='{$path.id}'>×</a>
+                                    </div>
+                                </foreach>
                             </div>
 
                             <div>
-                                <input type="file" />
+                                <input type="file" id='gallery-upload'/>
                             </div>
                         </td>
                     </tr>
                 </table>
 
-
                 <div class="button-div">
+                    <input type="hidden" name='id' value='{$row.id}'/>
                     <input type="submit" value=" 确定 " class="button"/>
                     <input type="reset" value=" 重置 " class="button" />
                 </div>
             </form>
         </div>
     </div>
-
 </block>
