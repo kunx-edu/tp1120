@@ -38,9 +38,9 @@
             'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
             'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
             'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
-            'directionalityltr', 'directionalityrtl', 'indent', '|',
+             'indent', '|',
             'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|',
-            'link', 'unlink', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|','simpleupload'
+            'link', 'unlink', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|','simpleupload','insertimage', 'attachment',
         ]]
         //当鼠标放在工具栏上时显示的tooltip提示,留空支持自动多语言配置，否则以配置值为准
         //,labelMap:{

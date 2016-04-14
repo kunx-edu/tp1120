@@ -41,7 +41,10 @@
     <js href='__UEDITOR__/ueditor.all.min.js'/>
     <js href='__UEDITOR__/lang/zh-cn/zh-cn.js'/>
     <script type='text/javascript'>
-        var ue = UE.getEditor('editor');
+        var ue = UE.getEditor('editor',{
+            serverUrl :'{:U('Editor/ueditor')}'
+        });
+//        var ue = UE.getEditor('editor',{serverUrl:'{:U("Editor/ueditor")}'});
         //准备配置选项数据
         var setting = {
                 data: {
