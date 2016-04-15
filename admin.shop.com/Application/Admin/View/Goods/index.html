@@ -10,37 +10,22 @@
         <div style="clear:both"></div>
     </h1>
     <div class="form-div">
-        <form action="" name="searchForm">
+        <form action="{:U()}" name="searchForm">
             <img src="__IMG__/icon_search.gif" width="26" height="22" border="0" alt="search" />
             <!-- 分类 -->
-            <select name="cat_id">
-                <option value="0">所有分类</option>
-                <foreach name="cat_list" item="val">
-                    <option value="<{$val.cat_id}>"><{$val.lev|str_repeat='&nbsp;&nbsp;',###}><{$val.cat_name}></option>
-                </foreach>
-            </select>
+            分类:
+            {:onearr2select($categories,'cat_id',I('get.cat_id'))}
             <!-- 品牌 -->
-            <select name="brand_id">
-                <option value="0">所有品牌</option>
-                <foreach name="brand_list" item="val">
-                    <option value="<{$val.brand_id}>"><{$val.brand_name}></option>
-                </foreach>
-            </select>
+            品牌
+            {:onearr2select($brands,'brand_id',I('get.brand_id'))}
             <!-- 推荐 -->
-            <select name="intro_type">
-                <option value="0">全部</option>
-                <option value="is_best">精品</option>
-                <option value="is_new">新品</option>
-                <option value="is_hot">热销</option>
-            </select>
+            推荐
+            {:onearr2select($goods_statuses,'goods_status',I('get.goods_status'))}
             <!-- 上架 -->
-            <select name="is_on_sale">
-                <option value=''>全部</option>
-                <option value="1">上架</option>
-                <option value="0">下架</option>
-            </select>
+            上架
+            {:onearr2select($is_on_sales,'is_on_sale',I('get.is_on_sale'))}
             <!-- 关键字 -->
-            关键字 <input type="text" name="keyword" size="15" />
+            关键字 <input type="text" name="keyword" size="15" value='{:I("get.keyword")}'/>
             <input type="submit" value=" 搜索 " class="button" />
         </form>
     </div>
@@ -53,6 +38,9 @@
                     <th>编号</th>
                     <th>商品名称</th>
                     <th>货号</th>
+                    <th>分类</th>
+                    <th>品牌</th>
+                    <th>供货商</th>
                     <th>价格</th>
                     <th>上架</th>
                     <th>精品</th>
@@ -67,6 +55,9 @@
                         <td align="center">{$row.id}</td>
                         <td align="center" class="first-cell"><span>{$row.name}</span></td>
                         <td align="center"><span onclick="">{$row.sn}</span></td>
+                        <td align="center">{$categories[$row['goods_category_id']]}</td>
+                        <td align="center">{$brands[$row['brand_id']]}</td>
+                        <td align="center">{$suppliers[$row['supplier_id']]}</td>
                         <td align="center"><span>{$row.shop_price}</span></td>
                         <td align="center"><img src="__IMG__/{$row.is_on_sale}.gif"/></td>
                         <td align="center"><img src="__IMG__/{$row.is_best}.gif"/></td>

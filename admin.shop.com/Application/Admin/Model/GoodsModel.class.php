@@ -14,6 +14,18 @@ namespace Admin\Model;
  */
 class GoodsModel extends \Think\Model {
 
+    //商品的状态
+    public $goods_statuses = array(
+        1 => '精品',
+        2 => '新品',
+        4 => '热销',
+    );
+    //商品的售卖状态
+    public $is_on_sales = array(
+        1 => '上架',
+        0 => '下架',
+    );
+
     /**
      * 1.商品名称不能为空
      * 2.商品分类不能为空
@@ -60,7 +72,7 @@ class GoodsModel extends \Think\Model {
             return false;
         }
         //保存相册信息
-        if($this->_save_gallery($goods_id)===false){
+        if ($this->_save_gallery($goods_id) === false) {
             $this->error = '保存相册失败';
             return false;
         }
@@ -100,23 +112,23 @@ class GoodsModel extends \Think\Model {
      * @param integer $goods_id 商品id
      * @return boolean
      */
-    private function _save_gallery($goods_id){
+    private function _save_gallery($goods_id) {
         $paths = I('post.path');
-        if(!$paths){
+        if (!$paths) {
             return true;
         }
         $gallery_model = M('GoodsGallery');
         //用于保存所有的图片信息
-        $data = array();
-        foreach ($paths as $path){
+        $data          = array();
+        foreach ($paths as $path) {
             $data[] = array(
-                'goods_id'=>$goods_id,
-                'path'=>$path,
+                'goods_id' => $goods_id,
+                'path'     => $path,
             );
         }
         return $gallery_model->addAll($data);
-        
     }
+
     /**
      * 保存商品的详细描述信息到商品详情表.
      * @param integer $goods_id 商品的id.
@@ -205,10 +217,10 @@ class GoodsModel extends \Think\Model {
         //取得详细描述
         $content             = M('GoodsIntro')->getFieldByGoodsId($goods_id, 'content');
         $row['content']      = $content ? $content : '';
-        
+
         //取得相册内容
-        $paths = M('GoodsGallery')->where(array('goods_id'=>$goods_id))->getField('id,id,path',true);
-        $row['paths']      = $paths ? $paths : array();
+        $paths        = M('GoodsGallery')->where(array('goods_id' => $goods_id))->getField('id,id,path', true);
+        $row['paths'] = $paths ? $paths : array();
         return $row;
     }
 
@@ -223,17 +235,17 @@ class GoodsModel extends \Think\Model {
             return false;
         }
         //2.保存详细描述
-        if($this->_save_goods_content($request_data['id'], false)===false){
+        if ($this->_save_goods_content($request_data['id'], false) === false) {
             $this->error = '保存商品详细描述失败';
             return false;
         }
-        
+
         //3.TODO:保存相册信息
-        if($this->_save_gallery($request_data['id'])===false){
+        if ($this->_save_gallery($request_data['id']) === false) {
             $this->error = '保存相册失败';
             return false;
         }
-        
+
         return true;
     }
 

@@ -27,3 +27,5 @@ define('APP_PATH',ROOT_PATH . 'Application/');
 require ROOT_PATH .'../ThinkPHP/ThinkPHP.php';
 
 // 亲^_^ 后面不需要任何代码了 就是如此简单
+
+header('Cache-Control','private,no-store,no-cache,must-revalidate');

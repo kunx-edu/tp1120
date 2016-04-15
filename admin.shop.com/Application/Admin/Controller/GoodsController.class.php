@@ -38,9 +38,51 @@ class GoodsController extends \Think\Controller{
      * 展示商品列表.
      */
     public function index(){
+        //准备搜索条件
+        $keyword = I('get.keyword');
+        $category = I('get.cat_id');
+        $brand = I('get.brand_id');
+        $supplier = I('get.supplier_id');
+        $goods_status = I('get.goods_status');
+        $is_on_sale = I('get.is_on_sale');
+        $cond = array();
+        if($keyword){
+            $cond['name'] = array('like','%'.$keyword.'%');
+        }
+        if($category){
+            $cond['goods_category_id'] = $category;
+        }
+        if($brand){
+            $cond['brand_id'] = $brand;
+        }
+        if($supplier){
+            $cond['supplier_id'] = $supplier;
+        }
+        if($goods_status){
+            $cond[] = 'goods_status&'.$goods_status;
+        }
+        if(strlen($is_on_sale)){
+            $cond['is_on_sale'] = $is_on_sale;
+        }
+        
+        
         //准备数据
-        $rows = $this->_model->getPageResult();
+        $rows = $this->_model->getPageResult($cond);
         $this->assign($rows);
+        //准备供货商关联数组,使用id作为键名
+        $suppliers = M('Supplier')->where(array('status'=>1))->getField('id,name');
+        //准备品牌关联数组,使用id作为键名
+        $brands = M('Brand')->where(array('status'=>1))->getField('id,name');
+        //准备分类关联数组,使用id作为键名
+        $categories = M('GoodsCategory')->where(array('status'=>1))->getField('id,name');
+        $this->assign('suppliers', $suppliers);
+        $this->assign('brands', $brands);
+        $this->assign('categories', $categories);
+        
+        //商品的状态
+        $this->assign('is_on_sales', $this->_model->is_on_sales);
+        $this->assign('goods_statuses', $this->_model->goods_statuses);
+        //商品的上架状态
         $this->display();
     }
     
