@@ -14,7 +14,7 @@
 </block>
 <block name='main'>
     <h1>
-        <span class="action-span"><a href="{:U('index')}">商品分类管理</a></span>
+        <span class="action-span"><a href="{:U('index')}">权限管理</a></span>
         <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
         <span id="search_id" class="action-span1"> - {$meta_title} </span>
     </h1>
@@ -23,14 +23,20 @@
         <form method="post" action="{:U()}" enctype="multipart/form-data" >
             <table cellspacing="1" cellpadding="3" width="100%">
                 <tr>
-                    <td class="label">商品分类名称</td>
+                    <td class="label">权限名称</td>
                     <td>
                         <input type="text" name="name" maxlength="60" value="{$row.name}" />
                         <span class="require-field">*</span>
                     </td>
                 </tr>
                 <tr>
-                    <td class="label">父级分类</td>
+                    <td class="label">路径</td>
+                    <td>
+                        <input type="text" name="path" maxlength="60" value="{$row.path}" placeholder="如果是目录型的可以不填"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">父级权限</td>
                     <td>
                         <input type="hidden" name="parent_id" id="parent_id"/>
                         <input type="text" disabled="disabled" id="parent_name" value="请选择"/>
@@ -38,7 +44,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="label">商品分类描述</td>
+                    <td class="label">权限描述</td>
                     <td>
                         <textarea  name="intro" cols="60" rows="4"  >{$row.intro}</textarea>
                     </td>
