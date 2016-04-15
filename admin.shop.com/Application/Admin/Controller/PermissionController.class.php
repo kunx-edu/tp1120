@@ -44,6 +44,9 @@ class PermissionController extends \Think\Controller {
         $this->display();
     }
 
+    /**
+     * 添加权限
+     */
     public function add() {
         if (IS_POST) {
             //收集数据
@@ -61,6 +64,39 @@ class PermissionController extends \Think\Controller {
             $this->_before_view();
             $this->display();
         }
+    }
+    
+    /**
+     * 修改权限.
+     * @param type $id
+     */
+    public function edit($id){
+        if(IS_POST){
+            if($this->_model->create()===false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            if($this->_model->updatePermission()===false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            $this->success('修改成功',U('index'));
+        }else{
+            $this->_before_view();
+            //获取数据
+            $row = $this->_model->where(array('status'=>1))->find($id);
+            $this->assign('row', $row);
+            $this->display('add');
+        }
+    }
+    
+    /**
+     * 删除权限及其后代权限.
+     * @param integer $id
+     */
+    public function delete($id){
+        if($this->_model->deletePermission($id) === false){
+            $this->error(get_error($this->_model->getError()));
+        }
+        $this->success('删除成功',U('index'));
     }
 
     private function _before_view() {
