@@ -78,6 +78,17 @@ class AdminController extends \Think\Controller{
         }
     }
     
+    /**
+     * 删除用户
+     * @param integer $id
+     */
+    public function delete($id) {
+        if($this->_model->deleteAdmin($id) === false){
+            $this->error(get_error($this->_model->getError()));
+        }
+        $this->success('删除成功',U('index'));
+    }
+    
     
     private function _before_view() {
         //准备所有的权限,用于ztree展示
