@@ -9,18 +9,40 @@
         <div class="main-div">
             <form method="post" action="{:U()}" enctype="multipart/form-data" >
                 <table cellspacing="1" cellpadding="3" width="100%">
-                    <tr>
-                        <td class="label">管理员名称</td>
-                        <td>
-                            <input type="text" name="name" maxlength="60" value="{$row.name}" />
-                            <span class="require-field">*</span>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td class="label">管理员名称</td>
+                            <td>
+                            <empty name="row">
+                                <input type="text" name="username" maxlength="60" value="{$row.username}" />
+                                <span class="require-field">*</span>
+                            <else/>
+                                {$row.username}
+                            </empty>
+                            </td>
+                        </tr>
+                        <empty name="row">
+                            <tr>
+                                <td class="label">密码</td>
+                                <td>
+                                    <input type="password" name="password" maxlength="60" value="{$row.password}" />
+                                </td>
+                            </tr>
+                        </empty>
+                        <tr>
+                            <td class="label">邮箱</td>
+                            <td>
+                                <empty name="row">
+                                    <input type="text" name="email" maxlength="60" value="{$row.email}" />
+                                <else/>
+                                    {$row.email}
+                                </empty>
+                            </td>
+                        </tr>
                     <tr>
                         <td class="label">角色</td>
                         <td>
                             <foreach name="roles" item="role">
-                                <label><input type="checkbox" name="role[]" maxlength="60" value="{$role.id}"/>{$role.name}</label>
+                                <label><input type="checkbox" name="role[]" maxlength="60" value="{$role.id}" <if condition="in_array($role['id'],$row['role_ids'])">checked="checked"</if>/>{$role.name}</label>
                             </foreach>
                         </td>
                     </tr>
@@ -30,25 +52,6 @@
                         <td>
                             <div id="perms"></div>
                             <ul id="treeDemo" class="ztree"></ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">管理员描述</td>
-                        <td>
-                            <textarea  name="intro" cols="60" rows="4"  >{$row.intro}</textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">排序</td>
-                        <td>
-                            <input type="text" name="sort" maxlength="40" size="15" value="{$row.sort|default=50}" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">是否显示</td>
-                        <td>
-                            <input type="radio" name="status" value="1"/> 是
-                            <input type="radio" name="status" value="0"  /> 否(当管理员下还没有商品的时候，首页及分类页的管理员区将不会显示该管理员。)
                         </td>
                     </tr>
                     <tr>
@@ -70,7 +73,6 @@
     <script type='text/javascript'>
         $(function(){
             $(':input[name=status]').val([{$row.status|default=1}]);
-                
                 
             //====================使用ztree展示一个管理员列表================
             //准备配置选项数据

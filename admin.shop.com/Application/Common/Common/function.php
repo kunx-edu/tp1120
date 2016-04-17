@@ -66,3 +66,13 @@ function onearr2select(array $data,$name,$select=''){
     $html .='</select>';
     return $html;
 }
+
+/**
+ * 加盐加密.
+ * @param string $password 原密码.
+ * @param string $salt     盐.
+ * @return string
+ */
+function salt_password($password,$salt){
+    return md5(md5($password).$salt);
+}

@@ -21,17 +21,19 @@
             <table cellpadding="3" cellspacing="1">
                 <tr>
                     <th>管理员名称</th>
-                    <th>管理员描述</th>
-                    <th>排序</th>
-                    <th>是否显示</th>
+                    <th>邮箱</th>
+                    <th>注册时间</th>
+                    <th>最后登录时间</th>
+                    <th>最后登录IP</th>
                     <th>操作</th>
                 </tr>
                 <foreach name='rows' item='row'>
                     <tr>
-                        <td class="first-cell">{$row.name}</td>
-                        <td align="center">{$row.intro}</td>
-                        <td align="center">{$row.sort}</td>
-                        <td align="center"><img src="__IMG__/{$row.status}.gif" /></td>
+                        <td class="first-cell">{$row.username}</td>
+                        <td align="center">{$row.email}</td>
+                        <td align="center">{$row.add_time|date="Y-m-d",###}</td>
+                        <td align="center">{$row.last_login_time|date="Y-m-d",###}</td>
+                        <td align="center">{$row.last_login_ip}</td>
                         <td align="center">
                             <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a> |
                             <a href="{:U('delete',array('id'=>$row['id']))}" title="编辑">移除</a> 

@@ -15,7 +15,7 @@ namespace Admin\Controller;
 class AdminController extends \Think\Controller{
     /**
      * 存储模型对象.
-     * @var \Admin\Model\PermissionModel 
+     * @var \Admin\Model\AdminModel 
      */
     private $_model = null;
 
@@ -35,12 +35,47 @@ class AdminController extends \Think\Controller{
     }
     
     public function index(){
+        $this->assign('rows',$this->_model->getList());
         $this->display();
     }
     
+    /**
+     * 添加管理员.
+     */
     public function add(){
-        $this->_before_view();
-        $this->display();
+        if(IS_POST){
+            if($this->_model->create() === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            if($this->_model->addAdmin() === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            $this->success('添加成功',U('index'));
+        }else{
+            $this->_before_view();
+            $this->display();
+        }
+    }
+    
+    /**
+     * 修改管理员
+     * @param integer $id
+     */
+    public function edit($id){
+        if(IS_POST){
+            if($this->_model->create() === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            if($this->_model->updateAdmin() === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            $this->success('修改成功',U('index'));
+        }else{
+            //获取管理员数据,包括基本信息 角色 权限
+            $this->assign('row', $this->_model->getAdminInfo($id));
+            $this->_before_view();
+            $this->display('add');
+        }
     }
     
     
