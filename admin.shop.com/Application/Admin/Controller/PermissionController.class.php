@@ -101,9 +101,9 @@ class PermissionController extends \Think\Controller {
 
     private function _before_view() {
         //准备所有的权限,用于ztree展示
-        $categories = $this->_model->getList('id,name,parent_id');
-        array_unshift($categories, array('id' => 0, 'name' => '顶级权限', 'parent_id' => 0));
-        $this->assign('categories', json_encode($categories));
+        $permissions = D('Permission')->getList('id,name,parent_id');
+        array_unshift($permissions, array('id' => 0, 'name' => '顶级权限', 'parent_id' => 0));
+        $this->assign('permissions', json_encode($permissions));
     }
 
 }
