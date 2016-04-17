@@ -64,32 +64,12 @@
 </block>
 <block name='js'>
     <js href='__JS__/jquery.min.js'/>
-    <js href='__UPLOADIFY__/jquery.uploadify.min.js'/>
     <js href='__ZTREE__/js/jquery.ztree.core.min.js'/>
     <js href='__ZTREE__/js/jquery.ztree.excheck.min.js'/>
     <js href='__LAYER__/layer.js'/>
     <script type='text/javascript'>
         $(function(){
             $(':input[name=status]').val([{$row.status|default=1}]);
-                $('#logo').uploadify({
-                    'buttonText':'选择文件',
-                    'fileObjName':'file',
-                    'swf'      : '__UPLOADIFY__/uploadify.swf',
-                    'uploader' : '{:U("Upload/upload")}',
-                    'onUploadSuccess':function(file_node,data){
-                        //将返回的字符串转为json对象
-                        data = $.parseJSON(data);
-                        if(data.status){
-                            //成功了,将文件地址存到隐藏域中
-                            $(':input[name=logo]').val(data.file_url);
-                            $('#logo_preview').attr('src','__UPLOAD_URL_PREFIX__/' + data.file_url+'-200');
-                            layer.msg('上传成功',{icon:6});
-                        }else{
-                            layer.msg(data.msg,{icon:5});
-                        }
-                        console.debug(data);
-                    },
-                });
                 
                 
             //====================使用ztree展示一个管理员列表================
