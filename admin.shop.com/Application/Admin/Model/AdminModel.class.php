@@ -13,7 +13,7 @@ namespace Admin\Model;
  * @author qingf
  */
 class AdminModel extends \Think\Model {
-
+    
     protected $_validate = array(
         /**
          * name 不能为空 唯一  长度6-16位
@@ -28,8 +28,10 @@ class AdminModel extends \Think\Model {
         array('email', 'require', '邮箱必填', self::EXISTS_VALIDATE, '', self::MODEL_INSERT),
         array('email', 'email', '邮箱不合法', self::EXISTS_VALIDATE, '', self::MODEL_INSERT),
     );
+    
     protected $_auto     = array(
         array('salt', '\Org\Util\String::randString', self::MODEL_INSERT, 'function', 6),
+        array('salt', '\Org\Util\String::randString', 'reset_pwd', 'function', 6),//当重置密码是自动生成一个盐
         array('add_time', NOW_TIME, self::MODEL_INSERT),
     );
     
@@ -219,6 +221,19 @@ class AdminModel extends \Think\Model {
         if ($this->_admin_permission_model->where(array('admin_id' => $admin_id))->delete() === false) {
             return false;
         }
+    }
+    
+    
+    public function resetPwd($id) {
+        //获取数据
+        $password = I('post.password');
+        if(empty($password)){
+            //使用系统自带的随机字符串生成方法生成
+            $len = mt_rand(8, 10);
+            $password = \Org\Util\String::randString($len, '', '-=_+_,./?!@#$%^&*()~');
+        }
+        $this->data['password'] = salt_password($password, $this->data['salt']);
+        return $this->save()?$password:false;
     }
 
 }

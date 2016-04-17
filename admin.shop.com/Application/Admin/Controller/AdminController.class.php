@@ -28,12 +28,17 @@ class AdminController extends \Think\Controller{
             'add'    => '添加管理员',
             'edit'   => '修改管理员',
             'delete' => '删除管理员',
+            'resetPwd' => '重置密码',
+            'tips' => '提醒',
         );
         $meta_title   = $meta_titles[ACTION_NAME];
         $this->assign('meta_title', $meta_title);
         $this->_model = D('Admin');
     }
     
+    /**
+     * 管理员列表.
+     */
     public function index(){
         $this->assign('rows',$this->_model->getList());
         $this->display();
@@ -89,6 +94,45 @@ class AdminController extends \Think\Controller{
         $this->success('删除成功',U('index'));
     }
     
+    /**
+     * 重置密码
+     * @param type $id
+     */
+    public function resetPwd($id) {
+        if(IS_POST){
+            //收集数据
+            if($this->_model->create('','reset_pwd') === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            //执行修改
+            if(($password = $this->_model->resetPwd()) === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            session('tips',$password);
+            
+            //跳转
+            $this->success('重置成功',U('tips'));
+        }else{
+            //获取管理员基本信息,以便确认没有改错
+            $row = $this->_model->field('id,username,email')->find($id);
+            if(empty($row)){
+                $this->error('查无此用户');
+            }
+            $this->assign('row', $row);
+            $this->display();
+        }
+        
+    }
+    
+    /**
+     * 展示提示信息.
+     */
+    public function tips(){
+        $password = session('tips');
+        session('tips',null);
+        $this->assign('tips', $password);
+        $this->display();
+    }
     
     private function _before_view() {
         //准备所有的权限,用于ztree展示
