@@ -4,15 +4,15 @@ define('DOMAIN', 'http://admin.shop.com');
 return array(
 //'配置项'=>'配置值'
     'TMPL_PARSE_STRING' => array(
-        '__CSS__'       => DOMAIN . '/Public/css',
-        '__JS__'        => DOMAIN . '/Public/js',
-        '__IMG__'       => DOMAIN . '/Public/images',
-        '__UPLOADIFY__' => DOMAIN . '/Public/ext/uploadify',
-        '__LAYER__'     => DOMAIN . '/Public/ext/layer',
-        '__ZTREE__'     => DOMAIN . '/Public/ext/ztree',
-        '__TREEGRID__'     => DOMAIN . '/Public/ext/treegrid',
-        '__UEDITOR__'     => DOMAIN . '/Public/ext/ueditor',
-        '__UPLOAD_URL_PREFIX__'   => 'http://7xsucm.com1.z0.glb.clouddn.com',
+        '__CSS__'               => DOMAIN . '/Public/css',
+        '__JS__'                => DOMAIN . '/Public/js',
+        '__IMG__'               => DOMAIN . '/Public/images',
+        '__UPLOADIFY__'         => DOMAIN . '/Public/ext/uploadify',
+        '__LAYER__'             => DOMAIN . '/Public/ext/layer',
+        '__ZTREE__'             => DOMAIN . '/Public/ext/ztree',
+        '__TREEGRID__'          => DOMAIN . '/Public/ext/treegrid',
+        '__UEDITOR__'           => DOMAIN . '/Public/ext/ueditor',
+        '__UPLOAD_URL_PREFIX__' => 'http://7xsucm.com1.z0.glb.clouddn.com',
     ),
     //配置数据库连接
     'DB_TYPE'           => 'mysql',
@@ -49,4 +49,7 @@ return array(
             'timeout'    => 300, //超时时间
         ), // 上传驱动配置
     ),
+    'CAPTCHA_SETTING'   => [
+        'length' => 4,
+    ],
 );

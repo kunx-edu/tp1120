@@ -134,6 +134,16 @@ class AdminController extends \Think\Controller{
         $this->display();
     }
     
+    /**
+     * 后台管理员登陆.
+     */
+    public function login(){
+        $this->display();
+    }
+    
+    /**
+     * 准备权限和角色数据,用于创建和修改管理员.
+     */
     private function _before_view() {
         //准备所有的权限,用于ztree展示
         $permissions = D('Permission')->getList('id,name,parent_id');
