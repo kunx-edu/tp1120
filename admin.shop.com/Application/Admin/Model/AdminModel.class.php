@@ -27,6 +27,10 @@ class AdminModel extends \Think\Model {
         array('password', '6,16', '密码长度不合法', self::EXISTS_VALIDATE, 'length', self::MODEL_INSERT),
         array('email', 'require', '邮箱必填', self::EXISTS_VALIDATE, '', self::MODEL_INSERT),
         array('email', 'email', '邮箱不合法', self::EXISTS_VALIDATE, '', self::MODEL_INSERT),
+        array('username', 'require', '用户名必填', self::MUST_VALIDATE, '', 'login'),
+        array('password', 'require', '密码必填', self::MUST_VALIDATE, '', 'login'),
+        array('captcha', 'require', '验证码必填', self::MUST_VALIDATE, '', 'login'),
+        array('captcha', 'check_captcha', '验证码不正确', self::MUST_VALIDATE, 'callback', 'login'),
     );
     
     protected $_auto     = array(
@@ -35,6 +39,17 @@ class AdminModel extends \Think\Model {
         array('add_time', NOW_TIME, self::MODEL_INSERT),
     );
     
+    /**
+     * 验证验证码
+     * @param string $code 用户提交的验证码.
+     * @return bool
+     */
+    protected function check_captcha($code){
+        $verify = new \Think\Verify();
+        return $verify->check($code);
+    }
+
+
     /**
      * 管理员-角色关联模型.
      * @var \Think\Model 
@@ -100,9 +115,6 @@ class AdminModel extends \Think\Model {
      */
     public function updateAdmin() {
         $request_data = $this->data;
-//        if($this->save()===false){
-//            return false;
-//        }
         //保存角色关联
         if ($this->_save_role($request_data['id'], false) === false) {
             $this->error = '更新角色关联失败';
@@ -236,4 +248,49 @@ class AdminModel extends \Think\Model {
         return $this->save()?$password:false;
     }
 
+    /**
+     * 1.验证验证码[自动验证]
+     * 2.用户名和密码必填[自动验证]
+     * 3.验证用户名是否存在
+     * 4.验证密码是否匹配
+     */
+    public function login(){
+        //为了安全我们将用户信息都删除
+        session('USERINFO',null);
+        $request_data = $this->data;
+        //1.验证用户名是否存在
+        $userinfo = $this->getByUsername($this->data['username']);
+        if(empty($userinfo)){
+            $this->error = '用户不存在';
+            return false;
+        }
+        //2.进行密码匹配验证
+        $password = salt_password($request_data['password'], $userinfo['salt']);
+        if($password != $userinfo['password']){
+            $this->error = '密码不正确';
+            return false;
+        }
+        //为了后续会话获取用户信息,我们存下来
+        session('USERINFO',$userinfo);
+        $this->_getPermissions($userinfo['id']);
+        return true;
+    }
+    
+    /**
+     * 获取用户权限列表,从角色和额外权限的关联表中获取.
+     * @param integer $admin_id
+     */
+    private function _getPermissions($admin_id){
+        session('PATHS',null);
+        /**
+         * SELECT DISTINCT path FROM admin_role ar LEFT JOIN role_permission rp ON ar.`role_id`=rp.`role_id` LEFT JOIN permission p ON rp.`permission_id`=p.`id` WHERE admin_id=1 AND path<>''
+UNION
+SELECT DISTINCT path FROM admin_permission ap LEFT JOIN permission p ON ap.`permission_id` = p.`id` WHERE admin_id=1 AND path<>''
+         */
+        $role_permssions = $this->distinct(true)->table('__ADMIN_ROLE__ as ar')->join('__ROLE_PERMISSION__ as rp ON ar.`role_id`=rp.`role_id`')->join('__PERMISSION__ as p ON rp.`permission_id`=p.`id`')->where(['admin_id'=>$admin_id ,'path'=>['neq','']])->getField('path',true);
+        
+        $admin_permissions = $this->distinct(true)->table('__ADMIN_PERMISSION__ as ap')->join('__PERMISSION__ as p ON ap.`permission_id` = p.`id`')->where(['admin_id'=>$admin_id ,'path'=>['neq','']])->getField('path',true);
+        $paths = array_merge($role_permssions,$admin_permissions);
+        session('PATHS',$paths);
+    }
 }

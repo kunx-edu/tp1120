@@ -138,7 +138,21 @@ class AdminController extends \Think\Controller{
      * 后台管理员登陆.
      */
     public function login(){
-        $this->display();
+        if(IS_POST){
+            //收集数据
+            if($this->_model->create('','login') === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            //执行修改
+            if(($password = $this->_model->login()) === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            
+            //跳转
+            $this->success('登陆成功',U('Index/index'));
+        }else{
+            $this->display();
+        }
     }
     
     /**
