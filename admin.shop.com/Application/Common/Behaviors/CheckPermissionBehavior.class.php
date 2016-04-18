@@ -12,47 +12,28 @@ namespace Common\Behaviors;
  *
  * @author qingf
  */
-class CheckPermissionBehavior extends \Think\Behavior{
+class CheckPermissionBehavior extends \Think\Behavior {
+
     public function run(&$params) {
         //先判断是否忽略
-        $url = implode('/', [MODULE_NAME,CONTROLLER_NAME,ACTION_NAME]);
-        $ignore = [
-            'Admin/Admin/login',
-            'Admin/Captcha/captcha',
-            'Admin/Index/index',
-            'Admin/Index/top',
-            'Admin/Index/menu',
-            'Admin/Index/main',
-            
-        ];
-        if(in_array($url, $ignore)){
+        $url    = implode('/', [MODULE_NAME, CONTROLLER_NAME, ACTION_NAME]);
+        $ignore = C('IGNORE_PATHS');
+        if (in_array($url, $ignore)) {
             return true;
         }
-        //SELECT DISTINCT path FROM admin_role ar LEFT JOIN role_permission rp ON ar.`role_id`=rp.`role_id` LEFT JOIN permission p ON rp.`permission_id`=p.`id` WHERE admin_id=1 AND path<>''
-        
-        //SELECT DISTINCT path FROM admin_permission ap LEFT JOIN permission p ON ap.`permission_id` = p.`id` WHERE admin_id=1 AND path<>''
         $userinfo = session('USERINFO');
-        if($userinfo){
+        if ($userinfo) {
+            //如果发现是超级管理员用户,就可以操作任何请求
+            if($userinfo['username'] == 'admin'){
+                return true;
+            }
             $paths = session('PATHS');
-//            $sql = "SELECT DISTINCT path FROM admin_role ar LEFT JOIN role_permission rp ON ar.`role_id`=rp.`role_id` LEFT JOIN permission p ON rp.`permission_id`=p.`id` WHERE admin_id={$userinfo['id']} AND path<>''";
-//            $permissions = M()->query($sql);
-//            $paths = [];
-//            foreach($permissions as $permission){
-//                $paths[] = $permission['path'];
-//            }
-//            
             //获取当前请求的路径
-            dump($paths);
-            if(in_array($url, $paths)){
-                echo 'you got it';
-            }else{
-                echo 'error';
-                exit;
+            if (!in_array($url, $paths)) {
                 $url = U('Admin/Admin/login');
                 redirect($url);
             }
         }
     }
 
-//put your code here
 }

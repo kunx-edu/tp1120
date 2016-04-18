@@ -143,4 +143,18 @@ class MenuModel extends \Think\Model{
         ];
         return $this->where($cond)->setField('status',0);
     }
+    
+    /**
+     * 获取当前登录用户所能看到的菜单列表.
+     */
+    public function getMenuList(){
+        //获取用户权限id列表
+        $permission_ids = session('PERM_IDS');
+        //SELECT path,NAME,LEVEL FROM menu_permission AS mp LEFT JOIN menu AS m ON mp.`menu_id`=m.`id` WHERE permission_id IN (6,16,17,28)
+        $cond = [
+            'permission_id'=>['in',$permission_ids],
+        ];
+        $menus = $this->distinct(true)->alias('m')->field('id,path,name,level,parent_id')->join('__MENU_PERMISSION__ as mp ON mp.`menu_id`=m.`id`')->where($cond)->select();
+        return $menus;
+    }
 }

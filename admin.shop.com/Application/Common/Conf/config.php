@@ -52,4 +52,13 @@ return array(
     'CAPTCHA_SETTING'   => [
         'length' => 4,
     ],
+    'IGNORE_PATHS'=>[
+            'Admin/Admin/login',
+            'Admin/Captcha/captcha',
+            'Admin/Index/index',
+            'Admin/Index/top',
+            'Admin/Index/menu',
+            'Admin/Index/main',
+            
+        ],
 );

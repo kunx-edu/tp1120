@@ -223,19 +223,33 @@ class AdminModel extends \Think\Model {
         return $this->_admin_permission_model->addAll($data);
     }
 
+    /**
+     * 删除管理员-角色关联.
+     * @param integer $admin_id 管理员id.
+     * @return boolean
+     */
     private function _delete_role($admin_id) {
         if ($this->_admin_role_model->where(array('admin_id' => $admin_id))->delete() === false) {
             return false;
         }
     }
 
+    /**
+     * 删除管理员-额外权限关联.
+     * @param integer $admin_id 管理员id.
+     * @return boolean
+     */
     private function _delete_permission($admin_id) {
         if ($this->_admin_permission_model->where(array('admin_id' => $admin_id))->delete() === false) {
             return false;
         }
     }
     
-    
+    /**
+     * 重置密码.
+     * @param integer $id 管理员id.
+     * @return string|false 成功返回新密码,失败返回false.
+     */
     public function resetPwd($id) {
         //获取数据
         $password = I('post.password');
@@ -282,15 +296,21 @@ class AdminModel extends \Think\Model {
      */
     private function _getPermissions($admin_id){
         session('PATHS',null);
-        /**
-         * SELECT DISTINCT path FROM admin_role ar LEFT JOIN role_permission rp ON ar.`role_id`=rp.`role_id` LEFT JOIN permission p ON rp.`permission_id`=p.`id` WHERE admin_id=1 AND path<>''
-UNION
-SELECT DISTINCT path FROM admin_permission ap LEFT JOIN permission p ON ap.`permission_id` = p.`id` WHERE admin_id=1 AND path<>''
-         */
-        $role_permssions = $this->distinct(true)->table('__ADMIN_ROLE__ as ar')->join('__ROLE_PERMISSION__ as rp ON ar.`role_id`=rp.`role_id`')->join('__PERMISSION__ as p ON rp.`permission_id`=p.`id`')->where(['admin_id'=>$admin_id ,'path'=>['neq','']])->getField('path',true);
-        
-        $admin_permissions = $this->distinct(true)->table('__ADMIN_PERMISSION__ as ap')->join('__PERMISSION__ as p ON ap.`permission_id` = p.`id`')->where(['admin_id'=>$admin_id ,'path'=>['neq','']])->getField('path',true);
-        $paths = array_merge($role_permssions,$admin_permissions);
+        session('PERM_IDS',null);
+        //获取通过角色得到的权限
+        $role_permssions = $this->distinct(true)->table('__ADMIN_ROLE__ as ar')->join('__ROLE_PERMISSION__ as rp ON ar.`role_id`=rp.`role_id`')->join('__PERMISSION__ as p ON rp.`permission_id`=p.`id`')->where(['admin_id'=>$admin_id ,'path'=>['neq','']])->getField('permission_id,path',true);
+        //获取额外权限
+        $admin_permissions = $this->distinct(true)->table('__ADMIN_PERMISSION__ as ap')->join('__PERMISSION__ as p ON ap.`permission_id` = p.`id`')->where(['admin_id'=>$admin_id ,'path'=>['neq','']])->getField('permission_id,path',true);
+//        $paths = array_merge($role_permssions,$admin_permissions);
+        //由于前面获取的都是关联数组,+合并会自动合并键名相同的元素,也就等同于做了去重
+        $role_permssions=$role_permssions?:[];
+        $admin_permissions=$admin_permissions?:[];
+        $permissions = $role_permssions+$admin_permissions;
+        //获取权限id列表
+        $permission_ids = array_keys($permissions);
+        //获取权限路径列表
+        $paths = array_values($permissions);
         session('PATHS',$paths);
+        session('PERM_IDS',$permission_ids);
     }
 }
