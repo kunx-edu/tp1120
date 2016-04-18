@@ -1,5 +1,10 @@
 <?php
 
+
+$random = mcrypt_create_iv(32);
+$random = sha1($random);
+var_dump($random);
+exit;
 phpinfo();
 exit;
 echo '<pre>';

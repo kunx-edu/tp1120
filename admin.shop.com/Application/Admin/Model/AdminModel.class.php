@@ -287,7 +287,28 @@ class AdminModel extends \Think\Model {
         //为了后续会话获取用户信息,我们存下来
         session('USERINFO',$userinfo);
         $this->_getPermissions($userinfo['id']);
+        
+        //保存自动登陆信息
+        $this->_save_token($userinfo['id']);
         return true;
+    }
+    
+    /**
+     * 判断用户是否需要自动登陆,如果需要就保存令牌到cookie和数据表中.
+     * @param integer $admin_id 管理员id.
+     */
+    private function _save_token($admin_id){
+        $remeber = I('post.remember');
+        if(!$remeber){
+            return true;
+        }
+        $data = [
+            'admin_id'=>$admin_id,
+            'token'=>sha1(mcrypt_create_iv(32)),
+        ];
+        //存到cookie和数据表中
+        cookie('AUTO_LOGIN_TOKEN',$data);
+        return M('AdminToken')->add($data);
     }
     
     /**

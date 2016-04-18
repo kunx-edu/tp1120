@@ -166,4 +166,13 @@ class AdminController extends \Think\Controller{
         $roles = D('Role')->getList('id,name');
         $this->assign('roles', $roles);
     }
+    
+    /**
+     * 退出.
+     */
+    public function logout(){
+        session(null);
+        cookie(null);
+        $this->success('退出成功',U('login'));
+    }
 }
