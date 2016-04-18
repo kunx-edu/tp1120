@@ -1,5 +1,7 @@
 <?php
-
+//setcookie('test',100);
+in_array('abc', null);
+exit;
 
 $random = mcrypt_create_iv(32);
 $random = sha1($random);

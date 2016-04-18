@@ -289,7 +289,7 @@ class AdminModel extends \Think\Model {
         $this->_getPermissions($userinfo['id']);
         
         //保存自动登陆信息
-        $this->_save_token($userinfo['id']);
+        $this->_saveToken($userinfo['id']);
         return true;
     }
     
@@ -297,7 +297,13 @@ class AdminModel extends \Think\Model {
      * 判断用户是否需要自动登陆,如果需要就保存令牌到cookie和数据表中.
      * @param integer $admin_id 管理员id.
      */
-    private function _save_token($admin_id){
+    private function _saveToken($admin_id){
+        //清空原有的令牌
+        $token_model = M('AdminToken');
+        cookie('AUTO_LOGIN_TOKEN',null);
+        $token_model->delete($admin_id);
+        
+        //判断是否需要自动登陆
         $remeber = I('post.remember');
         if(!$remeber){
             return true;
@@ -307,8 +313,43 @@ class AdminModel extends \Think\Model {
             'token'=>sha1(mcrypt_create_iv(32)),
         ];
         //存到cookie和数据表中
-        cookie('AUTO_LOGIN_TOKEN',$data);
-        return M('AdminToken')->add($data);
+        cookie('AUTO_LOGIN_TOKEN',$data,604800);
+        return $token_model->add($data);
+    }
+    
+    /**
+     * 检查令牌信息是否匹配
+     */
+    public function autoLogin(){
+        $data = cookie('AUTO_LOGIN_TOKEN');
+        $token_model = M('AdminToken');
+        if(!$token_model->where($data)->count()){
+            return false;
+        }
+        
+        //发现令牌匹配,原令牌经应当失效,避免cookie被黑客获取
+        cookie('AUTO_LOGIN_TOKEN',null);
+        $token_model->delete($data['admin_id']);
+        
+        //获取用户信息,并保存到session中
+        $userinfo = $this->find($data['admin_id']);
+        session('USERINFO',$userinfo);
+        
+        //为了安全,我们把令牌重新成成一次
+        $data = [
+            'admin_id'=>$data['admin_id'],
+            'token'=>sha1(mcrypt_create_iv(32)),
+        ];
+        
+        //存到cookie和数据表中
+        cookie('AUTO_LOGIN_TOKEN',$data,604800);
+        if($token_model->add($data) === false){
+            return false;
+        } else{
+            //如果发现操作都成功,就获取当前用户的权限信息
+            $this->_getPermissions($data['admin_id']);
+            return true;
+        }
     }
     
     /**

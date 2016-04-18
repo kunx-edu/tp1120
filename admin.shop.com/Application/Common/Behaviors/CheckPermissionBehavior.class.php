@@ -22,17 +22,32 @@ class CheckPermissionBehavior extends \Think\Behavior {
             return true;
         }
         $userinfo = session('USERINFO');
+        //如果session中没有数据,表示需要登陆,就执行自动登陆的逻辑
+        if(empty($userinfo)){
+            $admin_model = D('Admin');
+            //自动登陆并保存用户的信息和权限信息
+            $admin_model->autoLogin();
+            //保存之后由于要判断是否是超级管理员,所以要再取一次用户信息
+            $userinfo = session('USERINFO');
+        }
+        
+        //判断是否是超级管理员
         if ($userinfo) {
             //如果发现是超级管理员用户,就可以操作任何请求
             if($userinfo['username'] == 'admin'){
                 return true;
             }
-            $paths = session('PATHS');
-            //获取当前请求的路径
-            if (!in_array($url, $paths)) {
-                $url = U('Admin/Admin/login');
-                redirect($url);
-            }
+        }
+        
+        //获取用户可以访问的路径
+        $paths = session('PATHS');
+        if(!is_array($paths)){
+            $paths = [];
+        }
+        //获取当前请求的路径
+        if (!in_array($url, $paths)) {
+            $url = U('Admin/Admin/login');
+            redirect($url);
         }
     }
 

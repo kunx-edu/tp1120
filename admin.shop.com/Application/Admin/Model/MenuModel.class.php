@@ -150,6 +150,10 @@ class MenuModel extends \Think\Model{
     public function getMenuList(){
         //获取用户权限id列表
         $permission_ids = session('PERM_IDS');
+        //如果session中没有保存过权限列表,那么无需执行sql查询.
+        if(empty($permission_ids)){
+            return [];
+        }
         //SELECT path,NAME,LEVEL FROM menu_permission AS mp LEFT JOIN menu AS m ON mp.`menu_id`=m.`id` WHERE permission_id IN (6,16,17,28)
         $cond = [
             'permission_id'=>['in',$permission_ids],
