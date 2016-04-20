@@ -15,12 +15,7 @@ namespace Common\Behaviors;
 class CheckPermissionBehavior extends \Think\Behavior {
 
     public function run(&$params) {
-        //先判断是否忽略
-        $url    = implode('/', [MODULE_NAME, CONTROLLER_NAME, ACTION_NAME]);
-        $ignore = C('IGNORE_PATHS');
-        if (in_array($url, $ignore)) {
-            return true;
-        }
+        
         $userinfo = session('USERINFO');
         //如果session中没有数据,表示需要登陆,就执行自动登陆的逻辑
         if(empty($userinfo)){
@@ -39,11 +34,18 @@ class CheckPermissionBehavior extends \Think\Behavior {
             }
         }
         
+        //先判断是否忽略
+        $url    = implode('/', [MODULE_NAME, CONTROLLER_NAME, ACTION_NAME]);
+//        if (in_array($url, $ignore)) {
+//            return true;
+//        }
         //获取用户可以访问的路径
         $paths = session('PATHS');
         if(!is_array($paths)){
             $paths = [];
         }
+//        $ignore = C('IGNORE_PATHS');
+        $paths = array_merge(C('IGNORE_PATHS'),$paths);
         //获取当前请求的路径
         if (!in_array($url, $paths)) {
             $url = U('Admin/Admin/login');

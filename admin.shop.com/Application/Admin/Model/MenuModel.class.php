@@ -157,6 +157,7 @@ class MenuModel extends \Think\Model{
         //SELECT path,NAME,LEVEL FROM menu_permission AS mp LEFT JOIN menu AS m ON mp.`menu_id`=m.`id` WHERE permission_id IN (6,16,17,28)
         $cond = [
             'permission_id'=>['in',$permission_ids],
+            'status'=>1,
         ];
         $menus = $this->distinct(true)->alias('m')->field('id,path,name,level,parent_id')->join('__MENU_PERMISSION__ as mp ON mp.`menu_id`=m.`id`')->where($cond)->select();
         return $menus;
