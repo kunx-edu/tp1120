@@ -34,6 +34,9 @@ class MemberController extends \Think\Controller{
         $this->_model = D('Member');
     }
     
+    /**
+     * 用户注册.
+     */
     public function register(){
         if(IS_POST){
             //1.收集数据
@@ -44,6 +47,7 @@ class MemberController extends \Think\Controller{
             if($this->_model->addMember() === false){
                 $this->error(get_error($this->_model->getError()));
             }
+            //TODO::发送邮件
             //3.提示跳转
             $this->success('注册成功',U('login'));
         }else{

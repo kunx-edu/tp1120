@@ -53,3 +53,14 @@ function sendSMS($telphone,$params,$sign_name='四哥测试',$template_code = 'S
     }
 //    if($resp)
 }
+
+
+/**
+ * 加盐加密.
+ * @param string $password 原密码.
+ * @param string $salt     盐.
+ * @return string
+ */
+function salt_password($password,$salt){
+    return md5(md5($password).$salt);
+}
