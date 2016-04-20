@@ -58,12 +58,12 @@
                             <li>
                                 <label for="">用户名：</label>
                                 <input type="text" class="txt" name="username" /><span class='red'></span>
-                                <p>3-20位字符，可由中文、字母、数字和下划线组成</p>
+                                <p>2-16位字符，可由中文、字母、数字和下划线组成</p>
                             </li>
                             <li>
                                 <label for="">密码：</label>
                                 <input type="password" class="txt" name="password" id='password'/><span class='red'></span>
-                                <p>6-20位字符，可使用字母、数字和符号的组合，不建议使用纯数字、纯字母、纯符号</p>
+                                <p>6-16位字符，可使用字母、数字和符号的组合，不建议使用纯数字、纯字母、纯符号</p>
                             </li>
                             <li>
                                 <label for="">确认密码：</label>
@@ -87,7 +87,7 @@
                             <li class="checkcode">
                                 <label for="">验证码：</label>
                                 <input type="text"  name="checkcode" /><span class='red'></span>
-                                <img src="__IMG__/checkcode1.jpg" alt="" />
+                                <img src="{:U('Captcha/captcha',['nocache'=>NOW_TIME])}" alt="" />
                                 <span>看不清？<a href="">换一张</a></span>
                             </li>
 
@@ -148,6 +148,14 @@
             function bindPhoneNum() {
                 //启用输入框
                 $('#captcha').prop('disabled', false);
+                //发送ajax请求到后台
+                var url = '{:U("sendSMS")}';
+                var data = {
+                    'telphone':$('#tel').val(),
+                };
+                $.getJSON(url,data,function(response){
+                    console.debug(response);
+                });
 
                 var time = 30;
                 var interval = setInterval(function () {
@@ -182,8 +190,9 @@
                     rules:{
                         username:{
                             required:true,
-                            rangelength:[6,16],
+                            rangelength:[2,16],
                             //不能重复
+                            remote:'{:U("Member/checkUniqueByParams")}',
                         },
                         password:{
                             required:true,
@@ -197,11 +206,13 @@
                         email:{
                             required:true,
                             email:true,
+                            remote:'{:U("Member/checkUniqueByParams")}',
                         },
                         tel:{
                             required:true,
                             number:true,
                             china_mobile:true,
+                            remote:'{:U("Member/checkUniqueByParams")}',
                         },
                         captcha:{
                             required:true,
@@ -214,7 +225,8 @@
                     messages:{
                         username:{
                             required:'用户名必填',
-                            rangelength:'用户名长度必须是6-16位',
+                            rangelength:'用户名长度必须是2-16位',
+                            remote:'用户名已存在',
                         },
                         password:{
                             required:'密码必填',
@@ -228,10 +240,12 @@
                         email:{
                             required:'邮箱必填',
                             email:'邮箱格式不合法',
+                            remote:'邮箱已存在',
                         },
                         tel:{
                             required:'手机号码必填',
                             number:'手机号码不合法',
+                            remote:'手机号码已存在',
                         },
                         captcha:{
                             required:'手机验证码必填',

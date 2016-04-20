@@ -20,4 +20,13 @@ return array(
     'DB_PREFIX'         => '',
     'DB_CHARSET'        => 'utf8',
     'SHOW_PAGE_TRACE'   => true,
+    
+    'ALIDAYU_SETTING'=>[
+        'ak'=>'23349782',
+        'sk'=>'031fe4c712dafbb29fb1f82e82b4ba19',
+    ],
+    
+    'CAPTCHA_SETTING'   => [
+        'length' => 4,
+    ],
 );
