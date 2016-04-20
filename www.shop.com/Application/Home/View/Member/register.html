@@ -176,6 +176,9 @@
 //                        error.appendTo(element.parent());
 //                        console.debug(arguments,msg);
                     },
+                    success:function(error,element){
+                        $(element).siblings('.red').text('');//成功后清空错误提示内容
+                    },
                     rules:{
                         username:{
                             required:true,
@@ -198,6 +201,7 @@
                         tel:{
                             required:true,
                             number:true,
+                            china_mobile:true,
                         },
                         captcha:{
                             required:true,
@@ -238,6 +242,12 @@
                         agree:'请先同意许可协议',
                     },
                 });
+                
+                //自定义验证规则
+                $.validator.addMethod('china_mobile',function(value,element,params){
+                    var mobile = /^(13[0-9]{9})|(18[0-9]{9})|(14[0-9]{9})|(17[0-9]{9})|(15[0-9]{9})$/;
+                    return this.optional(element) || mobile.test(value);
+                },'手机号码不正确');
             });
         </script>
     </body>
