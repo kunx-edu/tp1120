@@ -47,12 +47,36 @@ class MemberController extends \Think\Controller{
             if($this->_model->addMember() === false){
                 $this->error(get_error($this->_model->getError()));
             }
-            //TODO::发送邮件
-            //3.提示跳转
             $this->success('注册成功',U('login'));
         }else{
             $this->display();
         }
+    }
+    
+    /**
+     * 激活账号.
+     * @param string $email 邮箱地址.
+     * @param string $token token字符串.
+     */
+    public function active($email,$token){
+        //1.检查数据表中是否有匹配的记录
+        $cond = [
+            'email'=>$email,
+            'token'=>$token,
+            'send_time'=>['egt',NOW_TIME - 86400],//send_time + 86400 > now_time
+        ];
+        //2.有就修改用户状态
+        //3.错误提示,跳转到用户注册
+        if(!$this->_model->where($cond)->count()){
+            dump($this->_model->getLastSql());
+            exit;
+            $this->error('验证失败',U('register'));
+        }
+        if($this->_model->where($cond)->setField(['status'=>1,'token'=>'','send_time'=>0])===false){
+            $this->error('激活失败',U('login'));
+        }
+        //4.激活成功删除数据表的token记录
+        $this->success('激活成功,请登录',U('login'));
     }
     
     /**

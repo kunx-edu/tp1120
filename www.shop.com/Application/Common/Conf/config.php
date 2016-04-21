@@ -29,4 +29,17 @@ return array(
     'CAPTCHA_SETTING'   => [
         'length' => 4,
     ],
+    
+    'EMAIL_SETTING'=>[
+//        'host'=>'smtp.163.com',
+//        'username'=>'13036395508@163.com',
+//        'password'=>'yuyuangang28',
+//        'smtpsecure'=>'ssl',
+//        'port'=>465,
+        'host'=>'smtp.126.com',
+        'username'=>'kunx_edu@126.com',
+        'password'=>'iam4ge',
+        'smtpsecure'=>'ssl',
+        'port'=>465,
+    ],
 );
