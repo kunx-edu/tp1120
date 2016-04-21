@@ -49,8 +49,8 @@
                             <li class="checkcode">
                                 <label for="">验证码：</label>
                                 <input type="text"  name="checkcode" /><span class='red'></span>
-                                <img src="{:U('Captcha/captcha',['nocache'=>NOW_TIME])}" alt="" />
-                                <span>看不清？<a href="">换一张</a></span>
+                                <img src="{:U('Captcha/captcha',['nocache'=>NOW_TIME])}" alt="" id="checkcode"/>
+                                <span>看不清？<a href="javascript:;" onclick="change_captcha()">换一张</a></span>
                             </li>
 
                             <li>
@@ -81,6 +81,10 @@
     <js href="__JS__/jquery.min.js"/>
     <js href="__JQ_VALIDATION__/jquery.validate.js"/>
     <script type="text/javascript">
+        function change_captcha(){
+            $('#checkcode').attr('src', '{:U("Captcha/captcha")}?nocache=' + new Date().getTime());
+        }
+        
         function bindPhoneNum() {
             //启用输入框
             $('#captcha').prop('disabled', false);

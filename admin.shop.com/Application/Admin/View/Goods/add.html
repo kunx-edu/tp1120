@@ -140,6 +140,29 @@
                 node.parent().remove();
             }
         });
+        
+        
+        
+        //---------------LOGO图片上传------------------
+        $('#logo-upload').uploadify({
+            'buttonText':'选择文件',
+            'fileObjName':'file',
+            'swf'      : '__UPLOADIFY__/uploadify.swf',
+            'uploader' : '{:U("Upload/upload")}',
+            'onUploadSuccess':function(file_node,data){
+                //将返回的字符串转为json对象
+                data = $.parseJSON(data);
+                if(data.status){
+                    //成功了,将文件地址存到隐藏域中
+                    $('#logo').val(data.file_url);
+                    $('#logo-priview').attr('src','__UPLOAD_URL_PREFIX__/' + data.file_url + '-150');
+                    layer.msg('上传成功',{icon:6});
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            
+        });
     </script>
 </block>
 <block name='main'>
@@ -191,7 +214,9 @@
                     <tr>
                         <td class="label">LOGO：</td>
                         <td>
-                            <input type="file" name="logo" value="" size="20"/>
+                            <input type="file" id="logo-upload" value="" size="20"/>
+                            <input type="hidden" name="logo" id="logo" value="{$row.logo}"/>
+                            <img src="__UPLOAD_URL_PREFIX__/{$row.logo}-150" id="logo-priview"/>
                         </td>
                     </tr>
                     <tr>

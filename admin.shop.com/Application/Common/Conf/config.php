@@ -24,7 +24,7 @@ return array(
     'DB_PREFIX'         => '',
     'DB_CHARSET'        => 'utf8',
     'SHOW_PAGE_TRACE'   => true,
-    'PAGE_SIZE'         => 2,
+    'PAGE_SIZE'         => 20,
     'PAGE_THEME'        => '%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%',
     'URL_MODEL'         => 2,
     //文件上传的相关配置.
