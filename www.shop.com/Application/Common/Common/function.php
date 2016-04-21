@@ -37,11 +37,6 @@ function sendSMS($telphone, $params, $sign_name = '四哥测试', $template_code
     $req->setSmsType("normal");
     $req->setSmsFreeSignName($sign_name);
 
-//    $data         = [
-//        'code'    => (string) mt_rand(1000, 9999),
-//        'product' => '仙人跳文化',
-//    ];
-
     $req->setSmsParam(json_encode($params));
     $req->setRecNum($telphone);
     $req->setSmsTemplateCode($template_code);
@@ -73,17 +68,17 @@ function salt_password($password, $salt) {
  * @return bool
  */
 function sendEmail($address, $subject, $content, array $attachment = []) {
-    $config = C('EMAIL_SETTING');
+    $config           = C('EMAIL_SETTING');
     vendor('PHPMailer.PHPMailerAutoload');
-    $mail = new \PHPMailer;
-    $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host       = $config['host'];  // Specify main and backup SMTP servers
-    $mail->SMTPAuth   = true;                               // Enable SMTP authentication
-    $mail->Username   =  $config['username'];                 // SMTP username
-    $mail->Password   =  $config['password'];                           // SMTP password
-    $mail->SMTPSecure =  $config['smtpsecure'];                            // Enable TLS encryption, `ssl` also accepted
-    $mail->Port       =  $config['port'];                                    // TCP port to connect to
-    $mail->setFrom( $config['username']); // 发件人
+    $mail             = new \PHPMailer;
+    $mail->isSMTP(); //使用smtp发送邮件
+    $mail->Host       = $config['host']; //配置发送服务器,如果是多个,使用英文逗号分隔
+    $mail->SMTPAuth   = true; //需要认证信息
+    $mail->Username   = $config['username']; //用户名
+    $mail->Password   = $config['password']; //密码
+    $mail->SMTPSecure = $config['smtpsecure']; //传输协议
+    $mail->Port       = $config['port']; //端口
+    $mail->setFrom($config['username']); // 发件人
     $mail->addAddress($address);     // 收件人
 
     if ($attachment) {
@@ -91,10 +86,9 @@ function sendEmail($address, $subject, $content, array $attachment = []) {
             $mail->addAttachment($item);         // 添加附件
         }
     }
-    $mail->isHTML(true);     // Set email format to HTML
-    $mail->Subject = $subject;
-    $mail->Body    = $content;
-    $mail->CharSet = 'utf-8';
-    $rst = $mail->send();
-    return $rst;
+    $mail->isHTML(true); //HTML格式邮件
+    $mail->Subject = $subject; //标题
+    $mail->Body    = $content; //正文
+    $mail->CharSet = 'utf-8'; //编码
+    return $mail->send();
 }

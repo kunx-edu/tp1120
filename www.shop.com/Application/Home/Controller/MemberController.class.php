@@ -13,6 +13,7 @@ namespace Home\Controller;
  * @author qingf
  */
 class MemberController extends \Think\Controller{
+    
     /**
      * 存储模型对象.
      * @var \Admin\Model\MemberModel 

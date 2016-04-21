@@ -52,10 +52,13 @@ class MemberModel extends \Think\Model {
 
     /**
      * 自动完成,随机盐,注册时间.
+     * 注册时生成激活字符串和发送时间
      */
     protected $_auto = [
         ['salt', 'Org\Util\String::randString', self::MODEL_INSERT, 'function'],
         ['add_time', NOW_TIME, self::MODEL_INSERT],
+        ['token','Org\Util\String::randString',self::MODEL_INSERT,'function',40],//邮件激活验证码
+        ['send_time',NOW_TIME,self::MODEL_INSERT],//邮件发送时间
     ];
 
     /**
@@ -80,10 +83,24 @@ class MemberModel extends \Think\Model {
         if (($member_id = $this->add()) === false) {
             return false;
         }
-
+        //发送激活邮件
+        if($this->_sendActiveEmail($request_data) === false){
+            $this->error = '激活邮件发送失败';
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * 发送激活邮件.
+     * @param string $email 收件人地址.
+     * @param string $token 及或字符串.
+     * @return bool
+     */
+    private function _sendActiveEmail($email,$token){
         //发送验证邮件
-        $token = \Org\Util\String::randString(40);
-        $url = U('active', ['email' => $request_data['email'], 'token' =>$token ], true, true);
+        $url = U('active', ['email' => $email, 'token' =>$token ], true, true);
 
         $content = <<<EMAIL
 <h1>注册成功,请激活账号</h1>
@@ -91,17 +108,7 @@ class MemberModel extends \Think\Model {
 <p>我们从未存在,我们无处不在!</p>
 <p style="text-align:right;">北京仙人跳文化传播有限公司</p>
 EMAIL;
-        if (sendEmail($request_data['email'], '注册成功,请激活账号', $content) === false) {
-            $this->error = '激活邮件发送失败';
-            return false;
-        }
-        //保存邮件验证信息
-        $data = [
-            'id'=>$member_id,
-            'token'=>$token,
-            'send_time'=>NOW_TIME,
-        ];
-        return $this->save($data);
+        return sendEmail($email, '注册成功,请激活账号', $content) ;
     }
 
 }
