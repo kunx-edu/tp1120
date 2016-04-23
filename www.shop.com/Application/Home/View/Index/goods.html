@@ -20,6 +20,7 @@
                 zoomHeight: 400
             });
         });
+//        document.execCommand("BackgroundImageCache", false, true);
     </script>
 </block>
 <block name='main'>
@@ -136,8 +137,8 @@
                 <!-- 图片预览区域 start -->
                 <div class="preview fl">
                     <div class="midpic">
-                        <a href="__IMG__/preview_l1.jpg" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
-                            <img src="__IMG__/preview_m1.jpg" alt="" />               <!-- 第一幅图片的中图 -->
+                        <a href="__UPLOAD_URL_PREFIX__/{$row.galleries.0}-l" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
+                            <img src="__UPLOAD_URL_PREFIX__/{$row.galleries.0}-m" alt="" />               <!-- 第一幅图片的中图 -->
                         </a>
                     </div>
 
@@ -148,47 +149,12 @@
                         <a href="javascript:;" id="forward" class="on"></a>
                         <div class="smallpic_wrap">
                             <ul>
-                                <li class="cur">
-                                    <a class="zoomThumbActive" href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m1.jpg',largeimage: '__IMG__/preview_l1.jpg'}"><img src="__IMG__/preview_s1.jpg"></a>
+                                <foreach name="row.galleries" item="gallery">
+                                <li <eq name="key" value="0">class="cur"</eq>>
+                                    <a <eq name="key" value="0">class="zoomThumbActive"</eq>href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '__UPLOAD_URL_PREFIX__/{$gallery}-m',largeimage: '__UPLOAD_URL_PREFIX__/{$gallery}-l'}"><img src="__UPLOAD_URL_PREFIX__/{$gallery}-s"></a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m2.jpg',largeimage: '__IMG__/preview_l2.jpg'}"><img src="__IMG__/preview_s2.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m3.jpg',largeimage: '__IMG__/preview_l3.jpg'}">  
-                                        <img src="__IMG__/preview_s3.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m4.jpg',largeimage: '__IMG__/preview_l4.jpg'}">  
-                                        <img src="__IMG__/preview_s4.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m5.jpg',largeimage: '__IMG__/preview_l5.jpg'}">  
-                                        <img src="__IMG__/preview_s5.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m6.jpg',largeimage: '__IMG__/preview_l6.jpg'}">  
-                                        <img src="__IMG__/preview_s6.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m7.jpg',largeimage: '__IMG__/preview_l7.jpg'}">  
-                                        <img src="__IMG__/preview_s7.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m8.jpg',largeimage: '__IMG__/preview_l8.jpg'}">  
-                                        <img src="__IMG__/preview_s8.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMG__/preview_m9.jpg',largeimage: '__IMG__/preview_l9.jpg'}">  
-                                        <img src="__IMG__/preview_s9.jpg"></a>
-                                </li>
+
+                                </foreach>
                             </ul>
                         </div>
 
