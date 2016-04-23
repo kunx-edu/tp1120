@@ -92,3 +92,17 @@ function sendEmail($address, $subject, $content, array $attachment = []) {
     $mail->CharSet = 'utf-8'; //编码
     return $mail->send();
 }
+
+/**
+ * 获取redis对象.
+ * @staticvar type $instance
+ * @return \Redis
+ */
+function get_redis(){
+    static $instance = null;
+    if(empty($instance)){
+        $instance = new Redis();
+        $instance->connect(C('REDIS_HOST'),C('REDIS_PORT'));
+    }
+    return $instance;
+}

@@ -50,15 +50,15 @@ return array(
     'SESSION_REDIS_PORT' => '6379', //端口,如果相同只填一个,用英文逗号分隔
     'SESSION_REDIS_AUTH' => '', //Redis auth认证(密钥中不能有逗号),如果相同只填一个,用英文逗号分隔
     //页面静态缓存
-//    'HTML_CACHE_ON'    => true, // 开启静态缓存
-//    'HTML_CACHE_TIME'  => 60, // 全局静态缓存有效期（秒）
-//    'HTML_FILE_SUFFIX' => '.shtml', // 设置静态缓存文件后缀
-//    'HTML_CACHE_RULES' => array(
-//    // 定义静态缓存规则
-//        'goods'=>['goods_info_{id}',60],//所有的控制器的goods方法都缓存成'goods_info_' . $_GET['id'] . '.shtml 缓存60秒
-//        'Index:goods'=>['goods/goods_{id}',60],//缓存Index控制器的goods操作,生成的文件放在goods目录下
-//        'Index:index'=>['{:action}',3600],//缓存Index控制器的index操作,文件名是index.shtml,缓存1小时
-//    ),
+    'HTML_CACHE_ON'    => true, // 开启静态缓存
+    'HTML_CACHE_TIME'  => 60, // 全局静态缓存有效期（秒）
+    'HTML_FILE_SUFFIX' => '.shtml', // 设置静态缓存文件后缀
+    'HTML_CACHE_RULES' => array(
+    // 定义静态缓存规则
+        'goods'=>['goods_info_{id}',60],//所有的控制器的goods方法都缓存成'goods_info_' . $_GET['id'] . '.shtml 缓存60秒
+        'Index:goods'=>['goods/goods_{id}',60],//缓存Index控制器的goods操作,生成的文件放在goods目录下
+        'Index:index'=>['{:action}',3600],//缓存Index控制器的index操作,文件名是index.shtml,缓存1小时
+    ),
     'DATA_CACHE_TYPE' => 'Redis', //数据缓存机制
     'REDIS_HOST'      => '127.0.0.1', //redis服务器的地址
     'REDIS_PORT'      => 6379, //redis服务器的端口

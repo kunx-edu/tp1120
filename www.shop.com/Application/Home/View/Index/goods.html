@@ -19,6 +19,13 @@
                 zoomWidth: 400,
                 zoomHeight: 400
             });
+            
+            //获取点击数
+            var url = '{:U("Index/getGoodsClickTimes")}';
+            var data = {goods_id:{$row.id}};
+            $.getJSON(url,data,function(response){
+                $('#click_times').text(response.click_times);
+            });
         });
 //        document.execCommand("BackgroundImageCache", false, true);
     </script>
@@ -169,6 +176,7 @@
                         <li class="market_price"><span>定价：</span><em>￥{$row.market_price}</em></li>
                         <li class="shop_price"><span>本店价：</span> <strong>￥{$row.shop_price}</strong> <a href="">(降价通知)</a></li>
                         <li><span>上架时间：</span>{$row.inputtime|date="Y-m-d H:i:s",###}</li>
+                        <li><span>点击次数：</span><span id='click_times' style='text-align: left;'></span></li>
                     </ul>
                     <form action="" method="post" class="choose">
                         <ul>

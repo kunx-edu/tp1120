@@ -67,6 +67,7 @@ class IndexController extends Controller {
      * @param integer $id 商品id.
      */
     public function goods($id){
+        
         //获取商品基本内容和详情还有相册
         $goods_model = D('Goods');
         //获取商品信息,如果出错,就跳回到首页
@@ -75,6 +76,17 @@ class IndexController extends Controller {
         }
         $this->assign('row',$row);
         $this->display();
+    }
+    
+    /**
+     * 获取到点击次数.
+     * @param integer $goods_id 商品id
+     */
+    public function getGoodsClickTimes($goods_id){
+        $goods_model = D('Goods');
+        $click_times = $goods_model->getGoodsClickFromRedis($goods_id);
+        $data =['click_times'=>$click_times];
+        die(json_encode($data));
     }
 
 }
