@@ -145,4 +145,15 @@ class MemberController extends \Think\Controller{
         cookie(null);
         $this->success('退出成功',U('login'));
     }
+    
+    
+    public function getUserName(){
+        $userinfo = session('MEMBER_INFO');
+        if($userinfo){
+            echo json_encode($userinfo['username']);
+        }else{
+            echo json_encode(false);
+        }
+        exit;
+    }
 }

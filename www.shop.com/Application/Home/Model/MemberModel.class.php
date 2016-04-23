@@ -174,9 +174,42 @@ EMAIL;
         return $token_model->add($data);
     }
 
+    /**
+     * cookie购物车保存到数据表.
+     * @return bool
+     */
     private function _cookie2db(){
         //将用户的cookie购物车保存到数据库中
         $shopping_car_model = D('ShoppingCar');
         return $shopping_car_model->cookie2db();
+    }
+    
+    /**
+     * 检查令牌信息是否匹配
+     */
+    public function autoLogin(){
+        $data = cookie('AUTO_LOGIN_TOKEN');
+        $token_model = M('MemberToken');
+        if(!$data || !$token_model->where($data)->count()){
+            return false;
+        }
+        
+        //发现令牌匹配,原令牌经应当失效,避免cookie被黑客获取
+        cookie('AUTO_LOGIN_TOKEN',null);
+        $token_model->delete($data['member_id']);
+        
+        //获取用户信息,并保存到session中
+        $userinfo = $this->find($data['member_id']);
+        session('MEMBER_INFO',$userinfo);
+        
+        //为了安全,我们把令牌重新成成一次
+        $data = [
+            'member_id'=>$data['member_id'],
+            'token'=>sha1(mcrypt_create_iv(32)),
+        ];
+        
+        //存到cookie和数据表中
+        cookie('AUTO_LOGIN_TOKEN',$data,604800);
+        return $token_model->add($data);
     }
 }

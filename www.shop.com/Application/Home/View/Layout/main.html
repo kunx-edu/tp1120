@@ -20,7 +20,7 @@
                 </div>
                 <div class="topnav_right fr">
                     <ul>
-                        <li>您好，欢迎来到京西！[<a href="{:U('Member/login')}">登录</a>] [<a href="{:U('Member/register')}">免费注册</a>] </li>
+                        <li id="userinfo"></li>
                         <li class="line">|</li>
                         <li>我的订单</li>
                         <li class="line">|</li>
@@ -70,9 +70,7 @@
                             <b></b>
                         </dt>
                         <dd>
-                            <div class="prompt">
-                                您好，请<a href="">登录</a>
-                            </div>
+                            <div class="prompt user-tips"></div>
                             <div class="uclist mt10">
                                 <ul class="list1 fl">
                                     <li><a href="">用户信息></a></li>
@@ -163,7 +161,7 @@
 
                 <div class="navitems fl">
                     <ul class="fl">
-                        <li class="current"><a href="">首页</a></li>
+                        <li class="current"><a href="{:U('Index/index')}">首页</a></li>
                         <li><a href="">电脑频道</a></li>
                         <li><a href="">家用电器</a></li>
                         <li><a href="">品牌大全</a></li>
@@ -230,7 +228,22 @@
         <!-- 底部版权 end -->
         <js href="__JS__/jquery.min.js"/>
         <js href="__JS__/header.js"/>
-        
+        <script type="text/javascript">
+            $(function(){
+                var url = '{:U("Member/getUserName")}';
+                $.getJSON(url,function(response){
+                    if(response){
+                        var html = '您好， '+response+' 欢迎来到京西！ [<a href="{:U('Member/logout')}">退出</a>] ';
+                        var user_tips = '您好，' + response;
+                    }else{
+                        var html = '您好，欢迎来到京西！[<a href="{:U('Member/login')}">登录</a>] [<a href="{:U('Member/register')}">免费注册</a>] ';
+                        var user_tips = '您好，请<a href="{:U('Member/login')}">登录</a>';
+                    }
+                    $('#userinfo').html(html);
+                    $('.user-tips').html(user_tips);
+                });
+            });
+        </script>
         <block name="js"></block>
     </body>
 </html>

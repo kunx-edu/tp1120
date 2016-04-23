@@ -19,7 +19,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="{:U('Member/login')}">登录</a>] [<a href="{:U('Member/register')}">免费注册</a>] </li>
+					<li id="userinfo"></li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -70,6 +70,20 @@
 		</p>
 	</div>
 	<!-- 底部版权 end -->
-<block name="js"></block>
+    <js href='__JS__/jquery.min.js'/>
+    <script type="text/javascript">
+        $(function(){
+            var url = '{:U("Member/getUserName")}';
+            $.getJSON(url,function(response){
+                if(response){
+                    var html = '您好， '+response+' 欢迎来到京西！ [<a href="{:U('Member/logout')}">退出</a>] ';
+                }else{
+                    var html = '您好，欢迎来到京西！[<a href="{:U('Member/login')}">登录</a>] [<a href="{:U('Member/register')}">免费注册</a>] ';
+                }
+                $('#userinfo').html(html);
+            });
+        });
+    </script>
+    <block name="js"></block>
 </body>
 </html>
