@@ -38,6 +38,10 @@ class MemberModel extends \Think\Model {
         ['tel', '/^(13|14|15|17|18)\d{9}$/', '手机号码不合法', self::EXISTS_VALIDATE, 'regex', self::MODEL_INSERT],
         ['captcha', 'checkPhoneCode', '手机验证码不正确', self::EXISTS_VALIDATE, 'callback', self::MODEL_INSERT],
         ['checkcode', 'checkCode', '验证码不正确', self::EXISTS_VALIDATE, 'callback', self::MODEL_INSERT],
+        ['username', 'require', '用户名必填', self::MUST_VALIDATE, '', 'login'],
+        ['password', 'require', '密码必填', self::MUST_VALIDATE, '', 'login'],
+        ['checkcode', 'require', '验证码必填', self::MUST_VALIDATE, '', 'login'],
+        ['checkcode', 'checkCode', '验证码不正确', self::MUST_VALIDATE, 'callback', 'login'],
     ];
 
     /**
@@ -110,5 +114,69 @@ class MemberModel extends \Think\Model {
 EMAIL;
         return sendEmail($email, '注册成功,请激活账号', $content) ;
     }
+    
+    
+    /**
+     * 1.验证验证码[自动验证]
+     * 2.用户名和密码必填[自动验证]
+     * 3.验证用户名是否存在
+     * 4.验证密码是否匹配
+     */
+    public function login(){
+        //为了安全我们将用户信息都删除
+        session('MEMBER_INFO',null);
+        $request_data = $this->data;
+        //1.验证用户名是否存在
+        $userinfo = $this->getByUsername($this->data['username']);
+        if(empty($userinfo)){
+            $this->error = '用户不存在';
+            return false;
+        }
+        //2.进行密码匹配验证
+        $password = salt_password($request_data['password'], $userinfo['salt']);
+        if($password != $userinfo['password']){
+            $this->error = '密码不正确';
+            return false;
+        }
+        //为了后续会话获取用户信息,我们存下来
+        session('MEMBER_INFO',$userinfo);
+        
+        //保存自动登陆信息
+        $this->_saveToken($userinfo['id']);
+        if($this->_cookie2db() === false){
+            $this->error = '购物车同步失败';
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * 判断用户是否需要自动登陆,如果需要就保存令牌到cookie和数据表中.
+     * @param integer $member_id 管理员id.
+     */
+    private function _saveToken($member_id){
+        //清空原有的令牌
+        $token_model = M('MemberToken');
+        cookie('AUTO_LOGIN_TOKEN',null);
+        $token_model->delete($member_id);
+        
+        //判断是否需要自动登陆
+        $remeber = I('post.remember');
+        if(!$remeber){
+            return true;
+        }
+        $data = [
+            'member_id'=>$member_id,
+            'token'=>sha1(mcrypt_create_iv(32)),
+        ];
+        //存到cookie和数据表中
+        cookie('AUTO_LOGIN_TOKEN',$data,604800);
+        return $token_model->add($data);
+    }
 
+    private function _cookie2db(){
+        //将用户的cookie购物车保存到数据库中
+        $shopping_car_model = D('ShoppingCar');
+        return $shopping_car_model->cookie2db();
+    }
 }

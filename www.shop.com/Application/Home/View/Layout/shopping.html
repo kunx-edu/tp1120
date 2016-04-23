@@ -1,14 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-	<title>{$meta_title}</title>
-        <css href="__CSS__/base.css"/>
-        <css href="__CSS__/global.css"/>
-        <css href="__CSS__/header.css"/>
-        <css href="__CSS__/login.css"/>
-        <css href="__CSS__/footer.css"/>
-        <block name="css"></block>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>购物车页面</title>
+        <css href='__CSS__/base.css'/>
+        <css href='__CSS__/global.css'/>
+        <css href='__CSS__/header.css'/>
+        <css href='__CSS__/cart.css'/>
+        <css href='__CSS__/footer.css'/>
+        <js href='__JS__/jquery.min.js'/>
+        <block name='js'></block>
 </head>
 <body>
 	<!-- 顶部导航 start -->
@@ -32,16 +33,26 @@
 	<!-- 顶部导航 end -->
 	
 	<div style="clear:both;"></div>
-
+	
 	<!-- 页面头部 start -->
 	<div class="header w990 bc mt15">
 		<div class="logo w990">
 			<h2 class="fl"><a href="{:U('Index/index')}"><img src="__IMG__/logo.png" alt="京西商城"></a></h2>
+			<div class="flow fr {:ACTION_NAME}">
+				<ul>
+                                    <li <eq name='ACTION_NAME' value='flow1'>class="cur"</eq>>1.我的购物车</li>
+					<li <eq name='ACTION_NAME' value='flow2'>class="cur"</eq>>2.填写核对订单信息</li>
+					<li <eq name='ACTION_NAME' value='flow3'>class="cur"</eq>>3.成功提交订单</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 	<!-- 页面头部 end -->
 	
-        <block name="main"></block>
+	<div style="clear:both;"></div>
+
+	
+        <block name='main'></block>
 
 	<div style="clear:both;"></div>
 	<!-- 底部版权 start -->
@@ -70,6 +81,5 @@
 		</p>
 	</div>
 	<!-- 底部版权 end -->
-<block name="js"></block>
 </body>
 </html>

@@ -106,3 +106,15 @@ function get_redis(){
     }
     return $instance;
 }
+
+/**
+ * 金额格式化
+ * @param number $number        原始数字.
+ * @param integer $decimals     小数点后的位数.
+ * @param string $dec_point     小数点使用的字符.
+ * @param string $thousands_sep 千位分隔符.
+ * @return string
+ */
+function money_format($number,$decimals=2,$dec_point ='.',$thousands_sep=''){
+    return number_format($number,$decimals,$dec_point,$thousands_sep);
+}

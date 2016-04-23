@@ -89,4 +89,15 @@ class IndexController extends Controller {
         die(json_encode($data));
     }
 
+    /**
+     * 添加到购物车
+     * @param integer $goods_id 商品id.
+     * @param integer $amount   购买数量.
+     */
+    public function add2Car($goods_id,$amount) {
+        //区分是否是已登录状态
+        $shopping_car_model = D('ShoppingCar');
+        $shopping_car_model->add2Car($goods_id,$amount);
+        $this->success('添加购物车成功',U('ShoppingCar/flow1'));
+    }
 }

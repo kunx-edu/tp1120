@@ -178,7 +178,7 @@
                         <li><span>上架时间：</span>{$row.inputtime|date="Y-m-d H:i:s",###}</li>
                         <li><span>点击次数：</span><span id='click_times' style='text-align: left;'></span></li>
                     </ul>
-                    <form action="" method="post" class="choose">
+                    <form action="{:U('Index/add2Car')}" method="post" class="choose">
                         <ul>
 
                             <li>
@@ -196,6 +196,7 @@
                                 <dl>
                                     <dt>&nbsp;</dt>
                                     <dd>
+                                        <input type='hidden' name='goods_id' value="{$row.id}"/>
                                         <input type="submit" value="" class="add_btn" />
                                     </dd>
                                 </dl>

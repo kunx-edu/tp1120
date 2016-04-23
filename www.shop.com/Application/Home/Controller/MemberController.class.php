@@ -113,4 +113,36 @@ class MemberController extends \Think\Controller{
             $this->error('发送失败');
         }
     }
+    
+    
+    /**
+     * 前台会员登陆.
+     */
+    public function login(){
+        if(IS_POST){
+            //收集数据
+            if($this->_model->create('','login') === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            //执行修改
+            if(($password = $this->_model->login()) === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            
+            //跳转
+            $this->success('登陆成功',U('Index/index'));
+        }else{
+            $this->display();
+        }
+    }
+    
+    
+    /**
+     * 退出.
+     */
+    public function logout(){
+        session(null);
+        cookie(null);
+        $this->success('退出成功',U('login'));
+    }
 }
