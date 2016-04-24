@@ -146,7 +146,9 @@ class MemberController extends \Think\Controller{
         $this->success('退出成功',U('login'));
     }
     
-    
+    /**
+     * ajax获取登陆用户用户名.
+     */
     public function getUserName(){
         $userinfo = session('MEMBER_INFO');
         if($userinfo){
