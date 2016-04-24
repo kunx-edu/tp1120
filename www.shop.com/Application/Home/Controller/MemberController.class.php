@@ -130,7 +130,11 @@ class MemberController extends \Think\Controller{
             }
             
             //跳转
-            $this->success('登陆成功',U('Index/index'));
+            $url = cookie('forward');
+            if(!$url){
+                $url = U('Index/index');
+            }
+            $this->success('登陆成功',$url);
         }else{
             $this->display();
         }
@@ -144,7 +148,8 @@ class MemberController extends \Think\Controller{
         //Redis类库是有问题,如果传入的null,会什么都不做
         session(null);
         //修复如果只传null,导致的不能销毁cookie的bug
-        cookie('AUTO_LOGIN_TOKEN',null);
+//        cookie('AUTO_LOGIN_TOKEN',null);
+        cookie(null);
         $this->success('退出成功',U('login'));
     }
     

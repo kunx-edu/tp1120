@@ -22,17 +22,27 @@ class ShoppingCarController extends \Think\Controller{
     }
 
 
+    /**
+     * 购物车列表展示.
+     */
     public function flow1(){
         //取出购物车数据
         $rows = $this->_model->getShoppingCar();
         $this->assign($rows);
         $this->display();
     }
+    
+    /**
+     * 用户提交订单信息.
+     * 必须登录,如果没有登录就跳转到登录页,登陆后再回来.
+     */
     public function flow2(){
         //如果是登陆成功才能看到
+        cookie('forward',null);
         if(!session('MEMBER_INFO')){
+            cookie('forward',__SELF__);
             $this->error('请先登录',U('Member/login'));
         }
-        $this->display('flow1');
+        $this->display('flow2');
     }
 }

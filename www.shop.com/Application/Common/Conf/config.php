@@ -63,4 +63,5 @@ return array(
     'REDIS_HOST'         => '127.0.0.1', //redis服务器的地址
     'REDIS_PORT'         => 6379, //redis服务器的端口
 //    'DATA_CACHE_TIME' => 3600, //数据有效期
+    'COOKIE_PREFIX' => 'www_shop_com_',//注意前缀不能有.
 );
