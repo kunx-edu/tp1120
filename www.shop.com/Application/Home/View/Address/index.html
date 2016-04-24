@@ -121,37 +121,12 @@
                 city_node.get(0).length=1;
                 area_node.get(0).length=1;
                 show_sub_location($(this).val(),city_node);
-//                var url = '{:U("getListByParentId")}';
-//                var province = $(this);
-//                var data = {parent_id:province.val()};
-//                
-//                //发送请求
-//                $.getJSON(url,data,function(response){
-//                    //将json解析添加到控件中去
-//                    $(response).each(function(){
-//                        var html = '<option value="'+this.id+'">'+this.name+'</option>';
-//                        $(html).appendTo(city_node);
-//                    });
-//                    
-//                });
             });
             //切换市的时候
             $('.city_id').change(function(){
                 //发送ajax请求,获取市级菜单.
                 area_node.get(0).length=1;
                 show_sub_location($(this).val(),area_node);
-//                var url = '{:U("getListByParentId")}';
-//                var city = $(this);
-//                var data = {parent_id:city.val()};
-//                //发送请求
-//                $.getJSON(url,data,function(response){
-//                    //将json解析添加到控件中去
-//                    $(response).each(function(){
-//                        var html = '<option value="'+this.id+'">'+this.name+'</option>';
-//                        $(html).appendTo(area_node);
-//                    });
-//                    
-//                });
             });
             
             /**
