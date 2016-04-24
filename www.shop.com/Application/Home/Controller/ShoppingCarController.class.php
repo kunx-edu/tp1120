@@ -29,6 +29,10 @@ class ShoppingCarController extends \Think\Controller{
         $this->display();
     }
     public function flow2(){
+        //如果是登陆成功才能看到
+        if(!session('MEMBER_INFO')){
+            $this->error('请先登录',U('Member/login'));
+        }
         $this->display('flow1');
     }
 }

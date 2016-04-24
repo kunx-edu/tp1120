@@ -76,17 +76,17 @@ class ShoppingCarModel extends \Think\Model{
             foreach($goods_infos as $key=>$value){
                 $value['sub_total'] = money_format($value['shop_price'] * $car_infos[$key]);
                 $value['amount'] = $car_infos[$key];
-                $total_price = money_format($total_price + $value['sub_total']);
+                $total_price += $value['sub_total'];
                 $goods_infos[$key]=$value;
             }
             
             return [
-                'total_price'=>$total_price,
+                'total_price'=>money_format($total_price),
                 'goods_infos'=>$goods_infos,
             ];
         } else{
             return [
-                'total_price'=>0,
+                'total_price'=>money_format(0),
                 'goods_infos'=>[],
             ];
         }
