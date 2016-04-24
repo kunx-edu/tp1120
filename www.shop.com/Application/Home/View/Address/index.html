@@ -70,11 +70,11 @@
 
             <div class="address_bd mt10">
                 <h4>新增收货地址</h4>
-                <form action="{:U('add')}" name="address_form">
+                <form action="{:U('add')}" name="address_form" method='post'>
                     <ul>
                         <li>
                             <label for=""><span>*</span>收 货 人：</label>
-                            <input type="text" name="" class="txt" />
+                            <input type="text" name="name" class="txt" />
                         </li>
                         <li>
                             <label for=""><span>*</span>所在地区：</label>
@@ -86,15 +86,15 @@
                         </li>
                         <li>
                             <label for=""><span>*</span>详细地址：</label>
-                            <input type="text" name="" class="txt address"  />
+                            <input type="text" name="detail_address" class="txt address"  />
                         </li>
                         <li>
                             <label for=""><span>*</span>手机号码：</label>
-                            <input type="text" name="" class="txt" />
+                            <input type="text" name="tel" class="txt" />
                         </li>
                         <li>
                             <label for="">&nbsp;</label>
-                            <input type="checkbox" name="" class="check" />设为默认地址
+                            <input type="checkbox" name="is_default" class="check" value='1'/>设为默认地址
                         </li>
                         <li>
                             <label for="">&nbsp;</label>

@@ -56,6 +56,7 @@ class AddressController extends \Think\Controller{
      * 收货地址列表
      */
     public function index() {
+        //TODO::读取地址列表.
         $provinces = $this->_model->getListByParentId();
         $this->assign('provinces', $provinces);
         $this->display();
@@ -68,5 +69,16 @@ class AddressController extends \Think\Controller{
     public function getListByParentId($parent_id){
         echo json_encode($this->_model->getListByParentId($parent_id));
         exit;
+    }
+    
+    /**
+     * 添加收货地址.
+     */
+    public function add(){
+        if($this->_model->create()===false || $this->_model->add() === false){
+            $this->error(get_error($this->_model->getError()));
+        } else{
+            $this->success('添加成功',U('index'));
+        }
     }
 }

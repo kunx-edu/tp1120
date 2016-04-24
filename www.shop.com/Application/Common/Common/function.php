@@ -174,3 +174,15 @@ function onearr2select(array $data, $name, $select = '') {
     $html .='</select>';
     return $html;
 }
+
+/**
+ * 获取登陆用户的id
+ * @return boolean
+ */
+function get_user_id(){
+    if($userinfo = session('MEMBER_INFO')){
+        return $userinfo['id'];
+    }else{
+        return false;
+    }
+}
