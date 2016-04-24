@@ -60,4 +60,13 @@ class AddressModel extends \Think\Model{
         }
         return $this->add();
     }
+    
+    /**
+     * 获取地址详情.
+     * @param interger $id
+     * @return array
+     */
+    public function getAddressById($id){
+        return $this->find($id);
+    }
 }
