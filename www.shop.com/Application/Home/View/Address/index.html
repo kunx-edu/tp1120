@@ -49,22 +49,16 @@
         <div class="content fl ml10">
             <div class="address_hd">
                 <h3>收货地址薄</h3>
+                <foreach name='rows' item='address'>
                 <dl>
-                    <dt>1.许坤 北京市 昌平区 仙人跳区 仙人跳大街 17002810530 </dt>
+                    <dt>{$key+1}.{$address.name} {$address.province_name} {$address.city_name} {$address.area_name} {$address.detail_address} {$address.tel} </dt>
                     <dd>
-                        <a href="">修改</a>
+                        <a href="{:U('edit',['id'=>$address['id']])}">修改</a>
                         <a href="">删除</a>
-                        <a href="">设为默认地址</a>
+                        <eq name='address.is_default' value='0'><a href="">设为默认地址</a></eq>
                     </dd>
                 </dl>
-                <dl class="last"> <!-- 最后一个dl 加类last -->
-                    <dt>2.许坤 四川省 成都市 高新区 仙人跳大街 17002810530 </dt>
-                    <dd>
-                        <a href="">修改</a>
-                        <a href="">删除</a>
-                        <a href="">设为默认地址</a>
-                    </dd>
-                </dl>
+                </foreach>
 
             </div>
 
@@ -74,27 +68,30 @@
                     <ul>
                         <li>
                             <label for=""><span>*</span>收 货 人：</label>
-                            <input type="text" name="name" class="txt" />
+                            <input type="text" name="name" class="txt" value='{$row.name}'/>
                         </li>
-                        <li>
+                        <li id='location'>
                             <label for=""><span>*</span>所在地区：</label>
+                            <input type="hidden" name='province_name' id='province_name'/>
                             {:arr2select($provinces,'province_id','id','name')}
 
+                            <input type="hidden" name='city_name' id='city_name'/>
                             {:arr2select([],'city_id','id','name')}
 
+                            <input type="hidden" name='area_name' id='area_name'/>
                             {:arr2select([],'area_id','id','name')}
                         </li>
                         <li>
                             <label for=""><span>*</span>详细地址：</label>
-                            <input type="text" name="detail_address" class="txt address"  />
+                            <input type="text" name="detail_address" class="txt address"  value='{$row.detail_address}' />
                         </li>
                         <li>
                             <label for=""><span>*</span>手机号码：</label>
-                            <input type="text" name="tel" class="txt" />
+                            <input type="text" name="tel" class="txt"  value='{$row.tel}'/>
                         </li>
                         <li>
                             <label for="">&nbsp;</label>
-                            <input type="checkbox" name="is_default" class="check" value='1'/>设为默认地址
+                            <input type="checkbox" name="is_default" id='is_default' class="check" value='1'/>设为默认地址
                         </li>
                         <li>
                             <label for="">&nbsp;</label>
@@ -114,16 +111,18 @@
         $(function(){
             //三级联动
             //切换省份的时候
+            var province_node = $('.province_id');
             var city_node = $('.city_id');
             var area_node = $('.area_id');
-            $('.province_id').change(function(){
+            var url = '{:U("getListByParentId")}';//获取下级的地址
+            province_node.change(function(){
                 //发送ajax请求,获取市级菜单.
                 city_node.get(0).length=1;
                 area_node.get(0).length=1;
                 show_sub_location($(this).val(),city_node);
             });
             //切换市的时候
-            $('.city_id').change(function(){
+            city_node.change(function(){
                 //发送ajax请求,获取市级菜单.
                 area_node.get(0).length=1;
                 show_sub_location($(this).val(),area_node);
@@ -136,7 +135,6 @@
              * @returns null
              */
             function show_sub_location(parent_id,show_node){
-                var url = '{:U("getListByParentId")}';
                 var data = {parent_id:parent_id};
                 //发送请求
                 $.getJSON(url,data,function(response){
@@ -147,6 +145,52 @@
                     });
                 });
             }
+            
+            //事件委托
+            $('#location').on('change','select',save_address_name);
+            
+            function save_address_name(){
+                var province_name = $('.province_id').find('option:checked').text();
+                $('#province_name').val(province_name);
+                var city_name = $('.city_id').find('option:checked').text();
+                $('#city_name').val(city_name);
+                var area_name = $('.area_id').find('option:checked').text();
+                $('#area_name').val(area_name);
+            }
+            
+            
+            //-------------------------------
+            <notempty name="row">
+            //1.回显省份
+            
+            var data = {parent_id:{$row.province_id}};
+            $.getJSON(url,data,function(city_list){
+                //发送ajax请求,获取市级菜单.
+                city_node.get(0).length=1;
+                area_node.get(0).length=1;
+                //取得市级菜单
+                //将json解析添加到控件中去
+                $(city_list).each(function(){
+                    var html = '<option value="'+this.id+'">'+this.name+'</option>';
+                    $(html).appendTo(city_node);
+                });
+                
+                var data = {parent_id:{$row.city_id}};
+                $.getJSON(url,data,function(area_list){
+                    $(area_list).each(function(){
+                        var html = '<option value="'+this.id+'">'+this.name+'</option>';
+                        $(html).appendTo(area_node);
+                    });
+                    
+                    //回显数据
+                    province_node.val([{$row.province_id}]);
+                    city_node.val([{$row.city_id}]);
+                    area_node.val([{$row.area_id}]);
+                    $('#is_default').val([{$row.is_default}]);
+                    save_address_name();
+                });
+            });
+            </notempty>
         });
     </script>
 </block>

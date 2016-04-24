@@ -18,6 +18,13 @@ class ShoppingCarController extends \Think\Controller{
      */
     private $_model = null;
     protected function _initialize(){
+        $meta_titles  = array(
+            'flow1'    => '我的购物车',
+            'flow2' => '填写核对订单信息',
+            'flow3'     => '成功提交订单',
+        );
+        $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '我的购物车';
+        $this->assign('meta_title', $meta_title);
         $this->_model = D('ShoppingCar');
     }
 

@@ -32,4 +32,32 @@ class AddressModel extends \Think\Model{
     public function getListByParentId($parent_id=0){
         return M('Locations')->where(['parent_id'=>$parent_id])->select();
     }
+    
+    /**
+     * 获取当前用户的收货地址列表.
+     * @return array
+     */
+    public function getList(){
+        $userinfo = session('MEMBER_INFO');
+        $cond = [
+            'member_id'=>$userinfo['id'],
+        ];
+        return $this->where($cond)->select();
+    }
+    
+    /**
+     * 添加地址,如果设定了默认,就将其余的设为非默认
+     * @return type
+     */
+    public function addAddress(){
+        if($this->data['is_default']){
+            //将已存在地址改为非默认
+            $userinfo = session('MEMBER_INFO');
+            $cond = [
+                'member_id'=>$userinfo['id'],
+            ];
+            $this->where($cond)->setField('is_default',0);
+        }
+        return $this->add();
+    }
 }
