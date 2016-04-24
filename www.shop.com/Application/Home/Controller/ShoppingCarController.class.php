@@ -38,11 +38,7 @@ class ShoppingCarController extends \Think\Controller{
      */
     public function flow2(){
         //如果是登陆成功才能看到
-        cookie('forward',null);
-        if(!session('MEMBER_INFO')){
-            cookie('forward',__SELF__);
-            $this->error('请先登录',U('Member/login'));
-        }
+        check_login();
         $this->display('flow2');
     }
 }

@@ -100,4 +100,5 @@ class IndexController extends Controller {
         $shopping_car_model->add2Car($goods_id,$amount);
         $this->success('添加购物车成功',U('ShoppingCar/flow1'));
     }
+    
 }
