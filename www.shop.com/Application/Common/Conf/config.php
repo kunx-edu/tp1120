@@ -64,4 +64,14 @@ return array(
     'REDIS_PORT'         => 6379, //redis服务器的端口
 //    'DATA_CACHE_TIME' => 3600, //数据有效期
     'COOKIE_PREFIX' => 'www_shop_com_',//注意前缀不能有.
+    //支付宝的配置
+    'ALIPAY_SETTING'=>[
+        'partner'=>'2088002155956432',
+        'seller_email'=>'guoguanzhao520@163.com',
+        'key'=>'a0csaesgzhpmiiguif2j6elkyhlvf4t9',
+        'sign_type'=>'MD5',
+        'input_charset'=>'utf-8',
+        'cacert'=>VENDOR_PATH . 'Alipay/cacert.pem',
+        'transport'=>'http',
+    ],
 );

@@ -78,7 +78,7 @@
                             <td><a href="">{$row.id}</a></td>
                             <td>
                                 <foreach name='row.goods_list' item='goods'>
-                                  <a href=""><img src="__UPLOAD_URL_PREFIX__/{$goods}" alt="" /></a>
+                                    <a href="{:U('Index/goods',['id'=>$key])}"><img src="__UPLOAD_URL_PREFIX__/{$goods}" alt="" /></a>
                                 </foreach>
                             </td>
                             <td>{$row.name}</td>
@@ -88,10 +88,10 @@
                             <td>
                                 <switch name='row.status'>
                                     <case value='1' break='1'>
-                                        <a href='#'>支付</a> | 
+                                        <a href='{:U("Pay/pay",["id"=>$row["id"]])}'>支付</a> | 
                                     </case>
                                     <case value='3' break='1'>
-                                        <a href='#'>确认收货</a> | 
+                                        <a href='{:U("finish",["id"=>$row["id"]])}'>确认收货</a> | 
                                     </case>
                                 </switch>
                                 <a href="">查看</a> | <a href="">删除</a></td>

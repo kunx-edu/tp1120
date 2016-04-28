@@ -63,4 +63,16 @@ class OrderInfoController extends \Think\Controller{
         $this->assign('order_statuses', $this->_model->order_statuses);
         $this->display();
     }
+    
+    public function finish($id) {
+        $data = [
+            'status'=>4,
+            'id'=>$id,
+        ];
+        if($this->_model->save($data)===false){
+            $this->error($this->_model->getError());
+        }else{
+            $this->success('订单完成');
+        }
+    }
 }

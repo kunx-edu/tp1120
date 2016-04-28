@@ -1,0 +1,56 @@
+<extend name='Layout:common'/>
+<block name='css'>
+    <css href='__CSS__/page.css'/>
+</block>
+<block name='main'>
+    <h1>
+        <span class="action-span"><a href="{:U('add')}">添加新商品</a></span>
+        <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
+        <span id="search_id" class="action-span1"> - {$meta_title} </span>
+        <div style="clear:both"></div>
+    </h1>
+    </div>
+
+    <!-- 商品列表 -->
+    <form method="post" action="" name="listForm" onsubmit="">
+        <div class="list-div" id="listDiv">
+            <table cellpadding="3" cellspacing="1">
+                <tr>
+                    <th>编号</th>
+                    <th>收货姓名</th>
+                    <th>手机号码</th>
+                    <th>订单金额</th>
+                    <th>支付方式</th>
+                    <th>创建时间</th>
+                    <th>订单状态</th>
+                    <th>操作</th>
+                </tr>
+                <foreach name="rows" item="row">
+                    <tr>
+                        <td align="center">{$row.id}</td>
+                        <td align="center" class="first-cell"><span>{$row.name}</span></td>
+                        <td align="center"><span onclick="">{$row.tel}</span></td>
+                        <td align="center">{$row['price']}</td>
+                        <td align="center">{$row.pay_type}</td>
+                        <td align="center">{$row['inputtime']|date="Y-m-d H:i:s",###}</td>
+                        <td align="center"><span>{$order_statuses[$row['status']]}</span></td>
+                        <td align="center">
+                            <switch name='row.status'>
+                                <case value='2' break='1'>
+                                    <a href='{:U("send",["id"=>$row["id"]])}'>发货</a> | 
+                                </case>
+                            </switch>
+                            <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑"><img src="__IMG__/icon_edit.gif" width="16" height="16" border="0" /></a>
+                            <a href="{:U('delete',array('id'=>$row['id']))}" onclick="" title="回收站"><img src="__IMG__/icon_trash.gif" width="16" height="16" border="0" /></a></td>
+                    </tr>
+                </foreach>
+            </table>
+
+            <!-- 分页开始 -->
+            <div class='page'>
+                {$page_html}
+            </div>
+            <!-- 分页结束 -->
+        </div>
+    </form>
+</block>
