@@ -53,6 +53,22 @@ class GoodsModel extends \Think\Model{
         //3.获取相册列表
         $row['galleries'] = M('GoodsGallery')->where(['goods_id'=>$id])->getField('path',true);
 //        $row['click_times'] = $this->getGoodsClick($id);
+        //获取会员价格
+        //从会员价格表中获取,如果没有,以默认折扣率计算
+        $memeber_goods_price_model = M('MemberGoodsPrice');
+        $memeber_goods_prices = $memeber_goods_price_model->getFieldByGoodsId($id,'member_level_id,price');
+        //获取所有会员等级
+        $member_level_model = M('MemberLevel');
+        $member_levels = $member_level_model->where(['status'=>1])->getField('id,name,discount');
+        $member_prices = [];
+        foreach ($member_levels as $key=>$value){
+            if(isset($memeber_goods_prices[$key])){
+                $member_prices[$value['name']] = $memeber_goods_prices[$key];
+            } else{
+                $member_prices[$value['name']] = money_format($row['shop_price'] * $value['discount'] / 100);
+            }
+        }
+        $row['member_prices'] = $member_prices;
         return $row;
     }
     

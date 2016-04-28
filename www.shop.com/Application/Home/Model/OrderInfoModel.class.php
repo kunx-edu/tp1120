@@ -13,6 +13,18 @@ namespace Home\Model;
  * @author qingf
  */
 class OrderInfoModel extends \Think\Model{
+    //订单状态
+    public $order_statuses = [
+        0=>'已关闭',
+        1=>'待支付',
+        2=>'待发货',
+        3=>'待收货',
+        4=>'已完成',
+    ];
+    
+    protected $_auto = [
+        ['inputtime',NOW_TIME,self::MODEL_INSERT]
+    ];
     public function addOrder(){
         $this->startTrans();
         $userinfo = session('MEMBER_INFO');
@@ -21,6 +33,7 @@ class OrderInfoModel extends \Think\Model{
         
         $address_id = I('post.address_id');
         //1.1.1查询地址表,获取地址信息
+        $this->data['price'] = $shopping_car['total_price'];//商品总价
         $address_info = D('Address')->getAddressById($address_id);
         if(($order_id = $this->_save_order($userinfo,$address_info)) === false){
             $this->rollback();
@@ -79,7 +92,7 @@ class OrderInfoModel extends \Think\Model{
                 'goods_id'=>$goods['id'],
                 'goods_name'=>$goods['name'],
                 'logo'=>$goods['logo'],
-                'price'=>$goods['shop_price'],
+                'price'=>$goods['member_price'],
                 'amount'=>$goods['amount'],
                 'total_price'=>$goods['sub_total'] ,
             ];
@@ -141,5 +154,18 @@ class OrderInfoModel extends \Think\Model{
             'price'=>$shopping_car['total_price'],
         ];
         return M('Invoice')->add($data);
+    }
+    
+    public function getList(){
+        $userinfo = session('MEMBER_INFO');
+        //订单基本信息
+        $rows = $this->where(['member_id'=>$userinfo['id']])->select();
+        //获取各个订单的商品列表
+        $order_info_item_model =M('OrderInfoItem');
+        foreach($rows as $key=>$value){
+            $value['goods_list'] = $order_info_item_model->getFieldByOrderInfoId($value['id'],'goods_id,logo');
+            $rows[$key] = $value;
+        }
+        return $rows;
     }
 }

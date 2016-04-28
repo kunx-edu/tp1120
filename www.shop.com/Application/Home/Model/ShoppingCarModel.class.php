@@ -71,10 +71,28 @@ class ShoppingCarModel extends \Think\Model{
             $goods_ids = array_keys($car_infos);
             //取出商品的详细信息
             $goods_infos = M('Goods')->where(['id'=>['in',$goods_ids]])->getField('id,logo,name,shop_price');
+            //获取商品的会员价(当前的会员等级)
+            //获取当前用户的等级
+            $score = M('Member')->getFieldById($userinfo['id'],'score');
+            $cond = [
+                'bottom'=>['elt',$score],
+                'top'=>['egt',$score],
+                'status'=>1,
+            ];
+//            $level_info = M('MemberLevel')->where(['bottom' ])->getField('id,discount'); 
+//            $level_info = M('MemberLevel')->where($cond)->buildSql(); 
+            $level_info = M('MemberLevel')->field('id,discount')->where($cond)->find(); 
             $total_price = 0;
             //根据详细信息计算金额
+            $goods_member_price_model = M('MemberGoodsPrice');
             foreach($goods_infos as $key=>$value){
-                $value['sub_total'] = money_format($value['shop_price'] * $car_infos[$key]);
+                $member_price = $goods_member_price_model->where(['goods_id'=>$value['id'],'member_level_id'=>$level_info['id']])->getField('price');
+                if(empty($member_price)){
+                    $member_price = money_format($value['shop_price'] * $level_info['discount']/100);
+                }
+                
+                $value['member_price'] = $member_price;
+                $value['sub_total'] = money_format($value['member_price'] * $car_infos[$key]);
                 $value['amount'] = $car_infos[$key];
                 $total_price += $value['sub_total'];
                 $goods_infos[$key]=$value;

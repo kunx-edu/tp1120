@@ -75,6 +75,7 @@ class IndexController extends Controller {
             $this->error(get_error($goods_model->getError()),U('index'));
         }
         $this->assign('row',$row);
+        //取出商品的会员价格
         $this->display();
     }
     
