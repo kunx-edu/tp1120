@@ -30,6 +30,11 @@ class ShoppingCarController extends \Think\Controller {
         $this->_model = D('ShoppingCar');
     }
 
+    public function test(){
+        $sub_query = M()->table('hx_shop_record')->distinct(true)->field('pid')->order('create_time desc')->buildSql();
+        echo M()->table('Goods')->where('id in ' .$sub_query)->order('status asc,inputtime desc')->page(1,20)->select(false);
+        exit;
+    }
     /**
      * 购物车列表展示.
      */

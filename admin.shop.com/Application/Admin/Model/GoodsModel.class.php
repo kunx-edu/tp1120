@@ -76,6 +76,12 @@ class GoodsModel extends \Think\Model {
             $this->error = '保存相册失败';
             return false;
         }
+        
+        //保存会员价
+        if ($this->_save_member_price($goods_id) === false) {
+            $this->error = '保存会员价失败';
+            return false;
+        }
         return true;
     }
 
@@ -221,6 +227,11 @@ class GoodsModel extends \Think\Model {
         //取得相册内容
         $paths        = M('GoodsGallery')->where(array('goods_id' => $goods_id))->getField('id,id,path', true);
         $row['paths'] = $paths ? $paths : array();
+        
+        //读取会员价格
+        $member_price_model = M('MemberGoodsPrice');
+        $member_prices = $member_price_model->where(['goods_id'=>$goods_id])->getField('member_level_id,price');
+        $row['member_prices'] = $member_prices;
         return $row;
     }
 
@@ -246,7 +257,44 @@ class GoodsModel extends \Think\Model {
             return false;
         }
 
+        //保存会员价
+        if ($this->_save_member_price($request_data['id'],false) === false) {
+            $this->error = '保存会员价失败';
+            return false;
+        }
         return true;
     }
 
+    /**
+     * 会员价格
+     * @param integer $goods_id 商品id.
+     */
+    private function _save_member_price($goods_id,$is_new=true){
+        $member_prices = I('post.member_price');
+        if (!$member_prices) {
+            return true;
+        }
+        $member_price_model = M('MemberGoodsPrice');
+        //用于保存所有的会员价格
+        $data          = array();
+        foreach ($member_prices as $key=>$value) {
+            //如果没有填写,就按照级别折扣,不需要创建记录
+            if(empty($value)){
+                continue;
+            }
+            $data[] = array(
+                'goods_id' => $goods_id,
+                'member_level_id'=>$key,
+                'price'     => $value,
+            );
+        }
+        if(!$is_new){
+            $member_price_model->where(['goods_id'=>$goods_id])->delete();
+        }
+        //如果会员价没有设置,直接返回成立
+        if(empty($data)){
+            return true;
+        }
+        return $member_price_model->addAll($data);
+    }
 }

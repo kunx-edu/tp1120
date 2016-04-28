@@ -296,6 +296,14 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td class="label">会员价格：</td>
+                        <td>
+                                <foreach name='member_levels' item='member_level'>
+                                    <label>{$member_level.name} <input type="text" name="member_price[{$member_level.id}]" value="{$row['member_prices'][$member_level['id']]}"/></label>元 <br />
+                                </foreach>
+                        </td>
+                    </tr>
                 </table>
 
                 <div class="button-div">

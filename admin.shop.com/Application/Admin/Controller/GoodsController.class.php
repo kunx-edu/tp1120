@@ -108,6 +108,10 @@ class GoodsController extends \Think\Controller {
         }
     }
 
+    /**
+     * 编辑商品
+     * @param type $id
+     */
     public function edit($id) {
         if (IS_POST) {
             //1.收集数据
@@ -144,6 +148,10 @@ class GoodsController extends \Think\Controller {
         //商品供货商
         $suppliers  = D('Supplier')->getList('id,name');
         $this->assign('suppliers', $suppliers);
+        
+        //获取所有的会员等级
+        $member_levels = M('MemberLevel')->where(['status'=>1])->select();
+        $this->assign('member_levels', $member_levels);
     }
 
     /**
