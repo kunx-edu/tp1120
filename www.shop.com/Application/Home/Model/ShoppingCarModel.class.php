@@ -70,7 +70,7 @@ class ShoppingCarModel extends \Think\Model{
             //取出商品的id
             $goods_ids = array_keys($car_infos);
             //取出商品的详细信息
-            $goods_infos = M('Goods')->where(['id'=>['in',$goods_ids]])->getField('id,logo,name,shop_price');
+            $goods_infos = M('Goods')->where(['id'=>['in',$goods_ids]])->getField('id,logo,name,stock,shop_price');
             //获取商品的会员价(当前的会员等级)
             //获取当前用户的等级
             $score = M('Member')->getFieldById($userinfo['id'],'score');
@@ -97,7 +97,6 @@ class ShoppingCarModel extends \Think\Model{
                 $total_price += $value['sub_total'];
                 $goods_infos[$key]=$value;
             }
-            
             return [
                 'total_price'=>money_format($total_price),
                 'goods_infos'=>$goods_infos,
@@ -139,4 +138,5 @@ class ShoppingCarModel extends \Think\Model{
             return true;
         }
     }
+
 }

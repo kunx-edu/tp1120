@@ -31,6 +31,13 @@ class OrderInfoModel extends \Think\Model{
         $shopping_car_model = D('ShoppingCar');
         $shopping_car = $shopping_car_model->getShoppingCar();
         
+        //获取库存,判断是否足够
+        if($this->_checkAndReduceStock($shopping_car)===false){
+            $this->error='商品库存不足';
+            $this->rollback();
+            return false;
+        }
+        
         $address_id = I('post.address_id');
         //1.1.1查询地址表,获取地址信息
         $this->data['price'] = $shopping_car['total_price'];//商品总价
@@ -54,6 +61,8 @@ class OrderInfoModel extends \Think\Model{
             return false;
         }
         $this->commit();
+        //已经创建了订单,购物车中的数据应当清除了
+        $this->_clearShoppingCar($userinfo);
         return true;
     }
     
@@ -167,5 +176,36 @@ class OrderInfoModel extends \Think\Model{
             $rows[$key] = $value;
         }
         return $rows;
+    }
+    
+    /**
+     * 检查并扣除库存.
+     * @param array $shopping_car 购物车数据
+     * @return boolean
+     */
+    private function _checkAndReduceStock(array $shopping_car){
+        
+        //检查库存是否足够
+        foreach($shopping_car['goods_infos'] as $goods){
+            if($goods['amount']>$goods['stock']){
+                return false;
+            }
+        }
+        $goods_model = M('Goods');
+        //扣除库存
+        $flag = true;
+        foreach($shopping_car['goods_infos'] as $goods){
+            $flag = $flag && $goods_model->where(['id'=>$goods['id']])->setDec('stock',$goods['amount']);
+        }
+        return $flag;
+    }
+    
+        
+    /**
+     * 清除购物车
+     * @param array $userinfo     用户信息
+     */
+    private function _clearShoppingCar(array $userinfo){
+        return M('ShoppingCar')->where(['member_id'=>$userinfo['id']])->delete();
     }
 }
