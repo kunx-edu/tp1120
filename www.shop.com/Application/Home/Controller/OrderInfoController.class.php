@@ -53,6 +53,9 @@ class OrderInfoController extends \Think\Controller{
         $this->redirect('ShoppingCar/flow3');
     }
     
+    /**
+     * 订单列表
+     */
     public function index(){
         //获取当前用户的订单列表.
         $rows = $this->_model->getList();
@@ -64,6 +67,10 @@ class OrderInfoController extends \Think\Controller{
         $this->display();
     }
     
+    /**
+     * 完成订单
+     * @param type $id
+     */
     public function finish($id) {
         $data = [
             'status'=>4,
@@ -74,5 +81,34 @@ class OrderInfoController extends \Think\Controller{
         }else{
             $this->success('订单完成');
         }
+    }
+    
+    /**
+     * 清理超时订单
+     */
+    public function cleanTimeoutOrder(){
+        //1.获取超时订单列表
+        /**
+         * inputtime + 5m < now_time
+         * inputtime < now_time-300
+         */
+        $cond = [
+            'status'=>1,
+            'inputtime'=>['lt',NOW_TIME-300],
+        ];
+        $order_list = $this->_model->where($cond)->getField('id',true);
+        if($order_list){
+            //2.获取订单所购买的商品,及其数量
+            $goods_list = M('OrderInfoItem')->where(['order_info_id'=>['in',$order_list]])->getField('goods_id,amount');
+            //3.将商品库存还原
+            $goods_model = M('Goods');
+            foreach($goods_list as $key=>$value){
+                $goods_model->where(['id'=>$key])->setInc('stock',$value);
+            }
+            //4.将订单取消
+            $this->_model->where($cond)->setField('status',0);
+        }
+        set_time_limit(0);
+        echo '执行成功';
     }
 }

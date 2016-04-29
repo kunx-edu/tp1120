@@ -80,4 +80,12 @@ class ShoppingCarController extends \Think\Controller {
         $this->display('flow2');
     }
     
+    
+    public function changeAmount($goods_id,$amount){
+        if($this->_model->changeAmount($goods_id,$amount)===false){
+            $this->error('修改失败');
+        }else{
+            $this->success('修改成功');
+        }
+    }
 }
