@@ -323,7 +323,7 @@ class AdminModel extends \Think\Model {
     public function autoLogin(){
         $data = cookie('AUTO_LOGIN_TOKEN');
         $token_model = M('AdminToken');
-        if(!$token_model->where($data)->count()){
+        if(empty($data) || !$token_model->where($data)->count()){
             return false;
         }
         
